@@ -1,5 +1,6 @@
 using UnityEngine;
 // using UnityEngine.SceneManagement;     
+using System.Collections;
 
 namespace Pong 
 { 
@@ -16,6 +17,14 @@ namespace Pong
         private Vector2 lastVelocity;
 
         private bool isSquished;
+        private bool teleportLocked;
+        private bool isServing;
+        private Vector2 serveDirection;
+
+        private Vector3 baseScale;
+        private Vector3 originalScale;
+
+        private BallTeleporter lastTeleporter;
 
         public enum BallType
         {
@@ -29,7 +38,17 @@ namespace Pong
 
         public BallType ballType;
 
-        [Header("Level Features")]
+        public enum LaunchMode
+        {
+            Auto,
+            Serve
+        }
+
+        [Header("Launch")]
+        public LaunchMode launchMode = LaunchMode.Auto;
+
+        [Header("LEVEL FEATURES")]
+        [Header("Ball Shrinking")]
         public bool canShrink = false;
 
         public float shrinkFactor = 0.95f;                                          // 5% smaller per paddle hit
@@ -40,6 +59,10 @@ namespace Pong
 
         public float liquidDrag = 1.2f;                                             // bestimmt, wie 'schwer' sich der Ball anf�hlt
         public float liquidBounceDamping = 0.9f;
+
+        [Header("Teleportation")]
+        public bool canTeleport = false;
+
 
         [Header("Materials")]
         public Material defaultMaterial;
@@ -64,8 +87,8 @@ namespace Pong
         private Material runtimeMaterial;
 
 
-        private Vector3 baseScale;
-        private Vector3 originalScale;
+
+
 
 
 
@@ -78,23 +101,32 @@ namespace Pong
             runtimeMaterial = Instantiate(sr.material);
             sr.material = runtimeMaterial;
 
+            currentSpeed = PongManager.instance.ballstartvelocity;
 
-            float side = Random.Range(0, 2) == 0 ? 1 : -1;
+            originalScale = transform.localScale; // in ursprüngliche Form zurückkehren
+            baseScale = originalScale;
 
-            // ensure non-flat launch angle
+            ApplyBallType();
+
+            if (launchMode == LaunchMode.Auto)
+            {
+                LaunchImmediately();
+            }
+            else
+            {
+                isServing = true;
+                rb.linearVelocity = Vector2.zero;
+            }
+        }
+
+        void LaunchImmediately()
+        {
+            float side = Random.value < 0.5f ? 1f : -1f;
             float angle = Random.Range(minYComponent, 1f);
             angle *= Random.value < 0.5f ? -1 : 1;
 
-            currentSpeed = PongManager.instance.ballstartvelocity;
-
-            Vector2 direction = new Vector2(side, angle).normalized;
-            rb.linearVelocity = direction * currentSpeed;
-
-            ApplyBallType();
-            Debug.Log($"Spawned ball of type: {ballType}");
-
-            originalScale = transform.localScale;                                   // immer wieder zur ursrünglichen Form zurückkehren
-            baseScale = originalScale;
+            Vector2 dir = new Vector2(side, angle).normalized;
+            rb.linearVelocity = dir * currentSpeed;
         }
 
         void ApplyBallType()
@@ -103,17 +135,20 @@ namespace Pong
             canShrink = false;
             isLiquid = false;
             canSquish = false;
+            canTeleport = true;
 
             switch (ballType)
             {
                 case BallType.Classic:
                     canShrink = true;
+                    canTeleport = false;
                     break;
 
                 case BallType.UnderWater:
                     isLiquid = true;
                     canSquish = true;
                     SetLiquidVisual(true);
+                    canTeleport = false;
                     break;
 
                 case BallType.PaddleDecrease:
@@ -133,6 +168,9 @@ namespace Pong
 
         void Update()
         {
+            if (isServing)
+                return;
+
             IncreaseSpeedOverTime();
 
             currentWobble = Mathf.Lerp(currentWobble, 0f, wobbleFadeSpeed * Time.deltaTime);
@@ -146,6 +184,9 @@ namespace Pong
 
         void FixedUpdate()
         {
+            if (isServing)
+                return;
+
             lastVelocity = rb.linearVelocity;
 
             if (isLiquid)
@@ -153,6 +194,7 @@ namespace Pong
                 ApplyLiquidDrag();
             }
         }
+
 
         void LateUpdate()
         {
@@ -176,6 +218,9 @@ namespace Pong
 
         void OnCollisionEnter2D(Collision2D collision)
         {
+            if (isServing)
+                return;
+
             Vector2 incomingVelocity = lastVelocity;
             float impactSpeed = incomingVelocity.magnitude;
 
@@ -225,9 +270,63 @@ namespace Pong
                 else
                     SquishVertical(scaledSquish);
             }
+        }
+
+        void OnTriggerEnter2D(Collider2D other)
+        {
+            if (isServing)
+                return;
+
+            if (teleportLocked)
+                return;
+
+            if (!canTeleport)
+                return;
+
+            if (!other.CompareTag("Teleporter"))
+                return;
+
+            BallTeleporter teleporter = other.GetComponent<BallTeleporter>();
+            if (teleporter == null)
+                return;
+
+            // Prevent instant bounce-back
+            if (teleporter == lastTeleporter)
+                return;
+
+            Teleport(teleporter);
+        }
 
 
 
+        void Teleport(BallTeleporter teleporter)
+        {
+            lastTeleporter = teleporter;
+
+            Vector3 exitPos = teleporter.exitPoint.position;
+            Vector2 exitNormal = teleporter.exitDirection.normalized;
+            float safeOffset = 0.6f; // slightly bigger than before
+
+            rb.position = (Vector2)exitPos + exitNormal * safeOffset;
+
+            Vector2 preservedDir = rb.linearVelocity.normalized;
+            rb.linearVelocity = preservedDir * currentSpeed;
+
+        }
+
+        void OnTriggerExit2D(Collider2D other)
+        {
+            BallTeleporter teleporter = other.GetComponent<BallTeleporter>();
+            if (teleporter != null && teleporter == lastTeleporter)
+            {
+                lastTeleporter = null;
+            }
+        }
+
+        IEnumerator UnlockTeleportNextPhysicsFrame()
+        {
+            yield return new WaitForFixedUpdate();
+            teleportLocked = false;
         }
 
         void ShrinkBall()
@@ -253,9 +352,29 @@ namespace Pong
             sr.material = isLiquid ? underwaterMaterial : defaultMaterial;
         }
 
+        public void PrepareServe(Vector2 direction)
+        {
+            rb.linearVelocity = Vector2.zero;
+            isServing = true;
+            serveDirection = direction;
+
+            StartCoroutine(ServeRoutine());
+        }
+
+        IEnumerator ServeRoutine()
+        {
+            yield return new WaitForSeconds(1f);
+
+            float angle = Random.Range(-0.5f, 0.5f);
+            Vector2 dir = new Vector2(serveDirection.x, angle).normalized;
+
+            rb.linearVelocity = dir * currentSpeed;
+            isServing = false;
+        }
+
         void SquishHorizontal(float amount)
         {
-            isSquished = true;
+            //isSquished = true;
             transform.localScale = new Vector3(
                 originalScale.x - amount,
                 originalScale.y + amount,
@@ -265,7 +384,7 @@ namespace Pong
 
         void SquishVertical(float amount)
         {
-            isSquished = true;
+            //isSquished = true;
             transform.localScale = new Vector3(
                 originalScale.x + amount,
                 originalScale.y - amount,

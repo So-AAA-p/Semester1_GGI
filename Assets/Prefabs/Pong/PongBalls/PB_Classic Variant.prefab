@@ -9,6 +9,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -2561340588544997903, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: m_ApplyActiveColorSpace
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -2561340588544997903, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: m_Parameters.widthCurve.m_Curve.Array.data[0].time
       value: 0
       objectReference: {fileID: 0}
@@ -94,6 +98,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: canShrink
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: canTeleport
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []

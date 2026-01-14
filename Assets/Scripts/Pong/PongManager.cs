@@ -31,7 +31,6 @@ namespace Pong
         public LevelType currentLevel = LevelType.Classic;
 
         public static PongManager instance;
-        public GameObject BallPrefab;
         public GameObject gameOverObject;
         public GameObject gameStartObject;
         public GameObject enter;
@@ -44,11 +43,18 @@ namespace Pong
 
         public int maxPoints = 5;
 
+        public Transform leftPaddle;
+        public Transform rightPaddle;
+
+        public float paddleSpawnOffset = 0.6f;
+        public float serveDelay = 1.0f;
+
         [Header("Ball Prefabs")]
         public GameObject classicBallPrefab;
         public GameObject underwaterBallPrefab;
         public GameObject[] ballTypePrefabs;
 
+        
 
 
 
@@ -102,6 +108,31 @@ namespace Pong
 
             StartCoroutine(SpawnBallWithDelay(1.5f));
             ConfigureLevel();
+        }
+
+        public void SpawnBallAtPaddle(GameObject ballPrefab)
+        {
+            Transform chosenPaddle;
+            Vector2 launchDirection;
+
+            if (Random.value < 0.5f)
+            {
+                chosenPaddle = leftPaddle;
+                launchDirection = Vector2.right;
+            }
+            else
+            {
+                chosenPaddle = rightPaddle;
+                launchDirection = Vector2.left;
+            }
+
+            Vector3 spawnPos = chosenPaddle.position +
+                (Vector3)(launchDirection * paddleSpawnOffset);
+
+            GameObject ballObj = Instantiate(ballPrefab, spawnPos, Quaternion.identity);
+            PongBall ball = ballObj.GetComponent<PongBall>();
+
+            ball.PrepareServe(launchDirection);
         }
 
 

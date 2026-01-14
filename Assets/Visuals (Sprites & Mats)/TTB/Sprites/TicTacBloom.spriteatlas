@@ -32,9 +32,10 @@ SpriteAtlas:
     secondaryTextureSettings: {}
     variantMultiplier: 1
     packables:
-    - {fileID: 2800000, guid: c2e0a4a88f382374bb4ce14ae695595e, type: 3}
+    - {fileID: 2800000, guid: a718012fd07307241a978600f8b62d83, type: 3}
     - {fileID: 2800000, guid: d0ec712c1ae2715428688df1c9d2b761, type: 3}
     - {fileID: 2800000, guid: 43114d4bc7311284b924716eba376555, type: 3}
+    - {fileID: 2800000, guid: 0b4b9b1907316254b81fde7bf91a4054, type: 3}
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
@@ -43,5 +44,5 @@ SpriteAtlas:
   m_PackedSprites: []
   m_PackedSpriteNamesToIndex: []
   m_RenderDataMap: {}
-  m_Tag: New Sprite Atlas
+  m_Tag: TicTacBloom
   m_IsVariant: 0

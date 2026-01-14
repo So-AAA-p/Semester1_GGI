@@ -1,8 +1,10 @@
-
+ï»¿
 using UnityEngine;
-using TMPro;																						//muss teilswiese manuell hinzugefügt werden
+using TMPro;																						//muss teilswiese manuell hinzugefÃ¼gt werden
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections;
+using System.Collections.Generic; // fÃ¼r Listen
 
 namespace TicTacToe
 {
@@ -11,155 +13,221 @@ namespace TicTacToe
         int currentPlayer = 0;
 
         public TextMeshProUGUI InfoText;
-
-        public FieldButton[] fieldbuttons;
-
-        // Gewinnkombinationen der Reihen, jeweils für die V-ordere 3 Buttons und H-intere 3 Buttons
-        int[] Reihe1V;
-        int[] Reihe1H;
-        int[] Reihe2V;
-        int[] Reihe2H;
-        int[] Reihe3V;
-        int[] Reihe3H;
-        int[] Reihe4V;
-        int[] Reihe4H;
-
-        // Gewinnkombinationen der Spalten, jeweils für die O-beren 3 Buttons und U-nteren 3 Buttons
-        int[] Spalte1O;
-        int[] Spalte1U;
-        int[] Spalte2O;
-        int[] Spalte2U;
-        int[] Spalte3O;
-        int[] Spalte3U;
-        int[] Spalte4O;
-        int[] Spalte4U;
-
-        // Gewinnkombinationen der Diagonalen, rechts oben nach links unten
-        int[] Diagonale1;
-        int[] Diagonale2;
-        int[] Diagonale2Ext; // Diagonale 2 extenden, also selbe Reihen, nur erst die oberen 3 Buttons, dann die unteren 3 Buttons
-        int[] Diagonale4;
-
-        // Gewinnkombinationen der Diagonalen, rechts unten nach links oben
-        int[] Diagonale5;
-        int[] Diagonale6;
-        int[] Diagonale6Ext; // Diagonale 6 extenden, also selbe Reihen, nur erst die unteren 3 Buttons, dann die oberen 3 Buttons
-        int[] Diagonale8;
-
-        int[][] winningCombinations;
-
-        public TextMeshProUGUI WinnerText;
-
-        public Button ResetButton;
-
+        public GameObject WinScreen;
+        public TextMeshProUGUI WinnerText; 
+        public Button ResetButton; 
         public Button BTMenu;
 
+        bool gameOver = false;
 
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
+        public int gridWidth = 4;
+        public int gridHeight = 4;
+
+        private FieldButton[,] grid;
+        public FieldButton[] fieldbuttons;
+
+        int player1Score = 0;
+        int player2Score = 0;
+        [SerializeField] int pointsToWin = 3;
+        [SerializeField] GameObject[] player1ScoreIcons; // size 3
+        [SerializeField] GameObject[] player2ScoreIcons; // size 3
+
+        [SerializeField] float sproutToSeedlingDelay = 0.6f;
+        [SerializeField] float seedlingToPlantDelay = 0.3f;
+
+        readonly Vector2Int[] directions =
+        {
+            new Vector2Int(1, 0),
+            new Vector2Int(0, 1),
+            new Vector2Int(1, 1),
+            new Vector2Int(1, -1),
+        };
+
+        int startingPlayer = 0; // 0 = Player1, 1 = Player2
+
+        //private void OnDestroy()                                                                        // wird immer ausgefÃ¼hrt, wenn Script durchgelaufen ist
+        //{
+        //    ResetButton.onClick.RemoveListener(RestartGame);
+        //}
+
         void Start()
         {
-            ResetButton.onClick.AddListener(RestartGame);                                               // AddListener ist Methode hier; weil Unity weiß, dass RestartGame eine Methode ist, braucht man nicht nochmal Klammern dahinter
-                                                                                                        // Jeder Listener nimmt Speicherplatz ein, deswegen Listener auch wieder deabonnieren
-            SetUpWinningConditions();
+            player1Score = 0;
+            player2Score = 0;
+            UpdateScoreUI();
 
+            currentPlayer = startingPlayer;
+            UpdateInfoText();
+
+            grid = new FieldButton[gridWidth, gridHeight];
+
+            for (int i = 0; i < fieldbuttons.Length; i++)
+            {
+                int x = i % gridWidth;
+                int y = i / gridWidth;
+
+                FieldButton fb = fieldbuttons[i];
+                fb.x = x;
+                fb.y = y;
+
+                grid[x, y] = fb;
+                fb.SetManager(this);
+            }
+
+            WinScreen.SetActive(false);
+            WinnerText.enabled = false;
             ResetButton.gameObject.SetActive(false);
-
-            BTMenu.onClick.AddListener(() => SceneManager.LoadScene(0));
         }
 
-        private void OnDestroy()                                                                        // wird immer ausgeführt, wenn Script durchgelaufen ist
+        void UpdateScoreUI()
         {
-            ResetButton.onClick.RemoveListener(RestartGame);
+            // Player 1
+            for (int i = 0; i < player1ScoreIcons.Length; i++)
+            {
+                player1ScoreIcons[i].SetActive(i < player1Score);
+            }
+
+            // Player 2
+            for (int i = 0; i < player2ScoreIcons.Length; i++)
+            {
+                player2ScoreIcons[i].SetActive(i < player2Score);
+            }
         }
 
-
-        // Update is called once per frame
-        void Update()
+        void ApplySproutGrowth()
         {
-            InfoText.text = currentPlayer == 1 ? ("Current Player: 2") : ("Current Player: 1");         // um TextMeshPro in string umzuwandeln, .text nach InfoText
+            bool[,] shouldSprout = new bool[gridWidth, gridHeight];
+
+            // Phase 1: detect
+            for (int x = 0; x < gridWidth; x++)
+            {
+                for (int y = 0; y < gridHeight; y++)
+                {
+                    FieldButton center = grid[x, y];
+
+                    if (center.owner == ButtonOwner.None || center.stage != GrowthStage.Seed)
+                        continue;
+
+                    for (int dx = -1; dx <= 1; dx++)
+                    {
+                        for (int dy = -1; dy <= 1; dy++)
+                        {
+                            if (dx == 0 && dy == 0)
+                                continue;
+
+                            int nx = x + dx;
+                            int ny = y + dy;
+
+                            if (nx < 0 || nx >= gridWidth || ny < 0 || ny >= gridHeight)
+                                continue;
+
+                            FieldButton neighbor = grid[nx, ny];
+
+                            if (
+                                neighbor.owner == center.owner &&
+                                (neighbor.stage == GrowthStage.Seed || neighbor.stage == GrowthStage.Sprout)
+                                )
+
+                            {
+                                shouldSprout[x, y] = true;
+                                shouldSprout[nx, ny] = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Phase 2: apply
+            for (int x = 0; x < gridWidth; x++)
+            {
+                for (int y = 0; y < gridHeight; y++)
+                {
+                    if (shouldSprout[x, y])
+                    {
+                        FieldButton fb = grid[x, y];
+                        if (fb.stage == GrowthStage.Seed)
+                            fb.AdvanceGrowth(); // Seed â†’ Sprout
+                    }
+                }
+            }
         }
 
+        //void Update()
+        //{
+        //    InfoText.text = currentPlayer == 1 ? ("Current Player: 2") : ("Current Player: 1");
+        //}
 
+        void UpdateInfoText() // nichtmehr jeden frame aufgerufen
+        {
+            InfoText.text = currentPlayer == 1
+                ? "Current Player: 2"
+                : "Current Player: 1";
+        }
 
         public void OnButtonClickedMan(FieldButton fieldButton)
         {
-            Debug.Log("SLAY");
-
+            if (fieldButton.owner != ButtonOwner.None)
+                return;
 
             ButtonOwner owner =
-            currentPlayer == 0 ? ButtonOwner.Player1 : ButtonOwner.Player2;
+                currentPlayer == 0 ? ButtonOwner.Player1 : ButtonOwner.Player2;
 
+            // 1. Place seed
             fieldButton.SetTile(owner, GrowthStage.Seed);
 
+            // 2. Fully resolve sprout growth
+            ApplySproutGrowth();
 
-            CheckForWinner();
+            // (Later)
+            // ApplySeedlingGrowth();
+            // ApplyPlantGrowthAndWin();
+
+            // 3. NOW it's safe to check for winner
+            CheckForWinner(fieldButton);
 
             currentPlayer = currentPlayer == 1 ? 0 : 1;
-
+            UpdateInfoText();
         }
 
-        void SetUpWinningConditions()                                                                   // void, weil nichts zurück gegeben wird
+        int CountInLine(FieldButton start, Vector2Int dir, ButtonOwner owner, GrowthStage stage)
         {
-            Reihe1V = new int[] { 0, 1, 2 };                                                            // Array, keine Liste
-            Reihe1H = new int[] { 1, 2, 3 };                                                            // Unterschied Liste/Array - Array: zu Arrays kann man keine weiteren Element hinzufügen; Liste: kann man weiter ergänzen
-            Reihe2V = new int[] { 4, 5, 6 };
-            Reihe2H = new int[] { 5, 6, 7 };
-            Reihe3V = new int[] { 8, 9, 10 };
-            Reihe3H = new int[] { 9, 10, 11 };
-            Reihe4V = new int[] { 12, 13, 14 };
-            Reihe4H = new int[] { 13, 14, 15 };
+            int count = 1; // include start
 
-            Spalte1O = new int[] { 0, 4, 8 };
-            Spalte1U = new int[] { 4, 8, 12 };
-            Spalte2O = new int[] { 1, 5, 9 };
-            Spalte2U = new int[] { 5, 9, 13 };
-            Spalte3O = new int[] { 2, 6, 10 };
-            Spalte3U = new int[] { 6, 10, 14 };
-            Spalte4O = new int[] { 3, 7, 11 };
-            Spalte4U = new int[] { 7, 11, 15 };
+            // forward
+            count += CountDirection(start, dir, owner, stage);
 
-            Diagonale1 = new int[] { 0, 5, 10 };
-            Diagonale2 = new int[] { 1, 6, 11 };
-            Diagonale2Ext = new int[] { 4, 9, 14 };
-            Diagonale4 = new int[] { 5, 10, 15 };
+            // backward
+            count += CountDirection(start, -dir, owner, stage);
 
-            Diagonale5 = new int[] { 2, 5, 8 };
-            Diagonale6 = new int[] { 3, 6, 9 };
-            Diagonale6Ext = new int[] { 6, 9, 12 };
-            Diagonale8 = new int[] { 7, 10, 13 };
-
-
-            winningCombinations = new int[][]
-            {
-                Reihe1V,
-                Reihe1H,
-                Reihe2V,
-                Reihe2H,
-                Reihe3V,
-                Reihe3H,
-                Reihe4V,
-                Reihe4H,
-
-                Spalte1O,
-                Spalte1U,
-                Spalte2O,
-                Spalte2U,
-                Spalte3O,
-                Spalte3U,
-                Spalte4O,
-                Spalte4U,
-
-                Diagonale1,
-                Diagonale2,
-                Diagonale2Ext,
-                Diagonale4,
-
-                Diagonale5,
-                Diagonale6,
-                Diagonale6Ext,
-                Diagonale8,
-            };
+            return count;
         }
+
+        int CountDirection(FieldButton start, Vector2Int dir, ButtonOwner owner, GrowthStage stage)
+        {
+            int count = 0;
+            int x = start.x + dir.x;
+            int y = start.y + dir.y;
+
+            while (x >= 0 && x < gridWidth && y >= 0 && y < gridHeight)
+            {
+                FieldButton fb = grid[x, y];
+
+                if (fb.owner != owner || fb.stage != stage)
+                    break;
+
+                count++;
+                x += dir.x;
+                y += dir.y;
+            }
+
+            return count;
+        }
+
+        //void SetUpWinningConditions()                                                                   // void, weil nichts zurÃ¼ck gegeben wird
+        //{
+        //    Reihe1V = new int[] { 0, 1, 2 };                                                            // Array, keine Liste
+        //    Reihe1H = new int[] { 1, 2, 3 };                                                            // Unterschied Liste/Array - Array: zu Arrays kann man keine weiteren Element hinzufÃ¼gen; Liste: kann man weiter ergÃ¤nzen
+        // ...    
 
 
         void DisableButtons()
@@ -170,87 +238,168 @@ namespace TicTacToe
             }
         }
 
-
-        void CheckForWinner()
+        void CheckForWinner(FieldButton lastPlaced)
         {
-            foreach (int[] combo in winningCombinations)
+            if (gameOver)
+                return;
+
+            if (lastPlaced.stage != GrowthStage.Sprout)
+                return;
+
+            foreach (var dir in directions)
             {
-                int a = combo[0]; 
-                int b = combo[1]; 
-                int c = combo[2];
+                int count = CountInLine(
+                    lastPlaced,
+                    dir,
+                    lastPlaced.owner,
+                    GrowthStage.Sprout
+                );
 
-                var ownerA = fieldbuttons[a].owner;
-                var ownerB = fieldbuttons[b].owner;
-                var ownerC = fieldbuttons[c].owner;
-
-                if (ownerA != ButtonOwner.None &&
-                    ownerA == ownerB &&
-                    ownerB == ownerC)
+                if (count >= 3)
                 {
-                    if (ownerA != ButtonOwner.None && ownerA == ownerB && ownerB == ownerC)                           // Feld muss belegt sein + alle 3 gleich
-                    {
-                        ButtonOwner winner = ownerA + 1;
+                    List<FieldButton> line = new List<FieldButton>();
+                    line.Add(lastPlaced);
 
-                        InfoText.enabled = false;
-                        WinnerText.enabled = true;
-                        WinnerText.text = "Player " + winner + " wins!";
-                        ResetButton.gameObject.SetActive(true);
+                    CollectDirection(lastPlaced, dir, line);
+                    CollectDirection(lastPlaced, -dir, line);
 
-                        Debug.Log("WINNER: Player " + winner);
-
-                        foreach (FieldButton fb in fieldbuttons)                                        // Farbe der Texte in den Buttons ändern
-                        {
-                            var text = fb.GetComponentInChildren<TextMeshProUGUI>();
-                            text.color = new Color32(124, 171, 86, 255);                                // bei Verwendun von RGB -> Color32, sonst geht nicht :)
-                                                                                                        // in Klammer -> (Rot, Grün, Blau, Alpha) Alpha ist die Deckkraft, bei 100% also 255, ist die Farbe komplett sichtbar
-                        }
-
-                        DisableButtons();
-                        return;
-
-                    }
-                }
-
-
-                    
-
-
-                if (IsBoardFull())
-                {
-                    InfoText.enabled = false;
-                    WinnerText.enabled = true;
-                    WinnerText.text = "Draw! Better luck next time :3";
-                    ResetButton.gameObject.SetActive(true);
-                    DisableButtons();
-
-                    foreach (FieldButton fb in fieldbuttons)
-                    {
-                        var text = fb.GetComponentInChildren<TextMeshProUGUI>();
-                        text.color = new Color32(124, 171, 86, 255);
-                    }
+                    StartCoroutine(ResolveWinGrowth(line));
+                    return;
                 }
             }
-      
 
-            bool IsBoardFull()
+            if (IsBoardFull())
             {
-                foreach (FieldButton fb in fieldbuttons)                                                // fb als abkürzung für fieldbutton
-                {
-                    if (fb.owner == ButtonOwner.None)
-                    {
-                        return false; 
-                    }
-                }
-                return true;
+                InfoText.enabled = false;
+                WinScreen.SetActive(true);
+                WinnerText.enabled = true;
+                WinnerText.text = "Draw! Better luck next time :3";
+                ResetButton.gameObject.SetActive(true);
+                DisableButtons();
+
+                //  foreach (FieldButton fb in fieldbuttons)
+                //  {
+                //      var text = fb.GetComponentInChildren<TextMeshProUGUI>();
+                //      text.color = new Color32(124, 171, 86, 255);
+                //  }
             }
+        }
+
+        IEnumerator ResolveWinGrowth(List<FieldButton> line)
+        {
+            foreach (var fb in line)
+                fb.AdvanceGrowth(); // Sprout â†’ Seedling
+
+            yield return new WaitForSeconds(sproutToSeedlingDelay);
+
+            foreach (var fb in line)
+                fb.AdvanceGrowth(); // Seedling â†’ Plant
+
+            yield return new WaitForSeconds(seedlingToPlantDelay);
+
+            ScorePoint(line[0].owner);
+        }
+
+        IEnumerator NextRoundRoutine(ButtonOwner roundWinner)
+        {
+            // Show round result UI here
+            // (activate your GameObjects here)
+            // example:
+            // roundWinPanel.SetActive(true);
+
+            yield return new WaitForSeconds(1.5f);
+
+            // Hide round UI again
+            // roundWinPanel.SetActive(false);
+
+            ResetBoard();
+
+            gameOver = false;
+            currentPlayer = startingPlayer;
+            UpdateInfoText();
+        }
+
+        void EndMatch(ButtonOwner winner)
+        {
+            InfoText.enabled = false;
+            WinScreen.SetActive(true);
+            WinnerText.enabled = true;
+            WinnerText.text = winner + " wins the match!";
+
+            ResetButton.gameObject.SetActive(true);
+            DisableButtons();
+            gameOver = true;
+        }
+
+        void ResetBoard()
+        {
+            foreach (FieldButton fb in fieldbuttons)
+            {
+                fb.ResetTile(); // you likely already have this
+                fb.EnableButton();
+            }
+        }
+
+        void CollectDirection(FieldButton start, Vector2Int dir, List<FieldButton> line)
+        {
+            int x = start.x + dir.x;
+            int y = start.y + dir.y;
+
+            while (x >= 0 && x < gridWidth && y >= 0 && y < gridHeight)
+            {
+                FieldButton fb = grid[x, y];
+
+                if (fb.owner != start.owner || fb.stage != GrowthStage.Sprout)
+                    break;
+
+                line.Add(fb);
+                x += dir.x;
+                y += dir.y;
+            }
+        }
+
+        void ScorePoint(ButtonOwner winner)
+        {
+            if (winner == ButtonOwner.Player1)
+                player1Score++;
+            else
+                player2Score++;
+
+            UpdateScoreUI();
+            // ðŸ” swap starting player for next round
+            startingPlayer = startingPlayer == 0 ? 1 : 0;
+
+            // ðŸ† check match win
+            if (player1Score >= pointsToWin || player2Score >= pointsToWin)
+            {
+                EndMatch(winner);
+                return;
+            }
+
+            // ðŸŽ¯ otherwise: start next round
+            StartCoroutine(NextRoundRoutine(winner));
+        }
+
+        bool IsBoardFull()
+        {
+            foreach (FieldButton fb in fieldbuttons)                                                // fb als abkÃ¼rzung fÃ¼r fieldbutton
+            {
+                if (fb.owner == ButtonOwner.None)
+                {
+                    return false; 
+                }
+            }
+            return true;
         }
 
         public void RestartGame()
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
+
+        public void BackToMenu()
+        {
+            SceneManager.LoadScene(0);
+        }
     }
-
 }
-
-
