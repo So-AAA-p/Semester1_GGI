@@ -1498,7 +1498,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1246556329}
         m_TargetAssemblyTypeName: ScenesManager, Assembly-CSharp
-        m_MethodName: OpenPong
+        m_MethodName: OpenPongDifs
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

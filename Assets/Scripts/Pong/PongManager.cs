@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace Pong
 {
@@ -34,7 +35,7 @@ namespace Pong
         public GameObject gameOverObject;
         public GameObject gameStartObject;
         public GameObject enter;
-        public float ballstartvelocity = 20;
+        public float ballstartvelocity = 5;
         public TextMeshProUGUI scoretext;
         public TextMeshProUGUI winnertext;
 
@@ -46,19 +47,13 @@ namespace Pong
         public Transform leftPaddle;
         public Transform rightPaddle;
 
-        public float paddleSpawnOffset = 0.6f;
+        public float paddleSpawnOffset = 0.25f;
         public float serveDelay = 1.0f;
 
         [Header("Ball Prefabs")]
         public GameObject classicBallPrefab;
         public GameObject underwaterBallPrefab;
         public GameObject[] ballTypePrefabs;
-
-        
-
-
-
-
 
 
 
@@ -186,7 +181,14 @@ namespace Pong
                 return;
             }
 
-            Instantiate(prefabToSpawn);
+            if (currentLevel == LevelType.BallTypes)
+            {
+                SpawnBallAtPaddle(prefabToSpawn);
+            }
+            else
+            {
+                Instantiate(prefabToSpawn);
+            }
         }
 
 

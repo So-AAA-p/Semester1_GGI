@@ -17,6 +17,7 @@ namespace TicTacToe
         public TextMeshProUGUI WinnerText; 
         public Button ResetButton; 
         public Button BTMenu;
+        public GameObject Visuals;
 
         bool gameOver = false;
 
@@ -270,19 +271,15 @@ namespace TicTacToe
 
             if (IsBoardFull())
             {
-                InfoText.enabled = false;
-                WinScreen.SetActive(true);
-                WinnerText.enabled = true;
-                WinnerText.text = "Draw! Better luck next time :3";
-                ResetButton.gameObject.SetActive(true);
-                DisableButtons();
-
-                //  foreach (FieldButton fb in fieldbuttons)
-                //  {
-                //      var text = fb.GetComponentInChildren<TextMeshProUGUI>();
-                //      text.color = new Color32(124, 171, 86, 255);
-                //  }
+                HandleDraw();
+                return;
             }
+
+            //  foreach (FieldButton fb in fieldbuttons)
+            //  {
+            //      var text = fb.GetComponentInChildren<TextMeshProUGUI>();
+            //      text.color = new Color32(124, 171, 86, 255);
+            //  }
         }
 
         IEnumerator ResolveWinGrowth(List<FieldButton> line)
@@ -324,6 +321,7 @@ namespace TicTacToe
             InfoText.enabled = false;
             WinScreen.SetActive(true);
             WinnerText.enabled = true;
+            Visuals.SetActive(false); // shhhhh
             WinnerText.text = winner + " wins the match!";
 
             ResetButton.gameObject.SetActive(true);
@@ -390,6 +388,35 @@ namespace TicTacToe
                 }
             }
             return true;
+        }
+
+        void HandleDraw()
+        {
+            gameOver = true;
+
+            WinScreen.SetActive(true);
+            WinnerText.enabled = true;
+            Visuals.SetActive(false);
+            WinnerText.text = "Draw! :3";
+
+            StartCoroutine(DrawNextRoundRoutine());
+        }
+        IEnumerator DrawNextRoundRoutine()
+        {
+            yield return new WaitForSeconds(1.5f);
+
+            WinScreen.SetActive(false);
+            WinnerText.enabled = false;
+            Visuals.SetActive(true);
+
+            ResetBoard();
+
+            // 🔁 starting player still swaps on draw (optional, but recommended)
+            startingPlayer = startingPlayer == 0 ? 1 : 0;
+
+            currentPlayer = startingPlayer;
+            gameOver = false;
+            UpdateInfoText();
         }
 
         public void RestartGame()

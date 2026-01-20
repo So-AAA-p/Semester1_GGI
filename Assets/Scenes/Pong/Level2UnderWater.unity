@@ -1530,6 +1530,11 @@ MonoBehaviour:
     minX: -8
     maxX: 8
   moveHorizontally: 1
+--- !u!4 &1295245107 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5465320193406859863, guid: c6a4c485cd44b7f42b418f2aa817d742, type: 3}
+  m_PrefabInstance: {fileID: 873920686}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1344198830
 GameObject:
   m_ObjectHideFlags: 0
@@ -1575,7 +1580,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentLevel: 1
-  BallPrefab: {fileID: 6202663051245857347, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
   gameOverObject: {fileID: 402032842}
   gameStartObject: {fileID: 281429238}
   enter: {fileID: 0}
@@ -1583,6 +1587,10 @@ MonoBehaviour:
   scoretext: {fileID: 1512792782}
   winnertext: {fileID: 5356882}
   maxPoints: 5
+  leftPaddle: {fileID: 1295245107}
+  rightPaddle: {fileID: 1685704107}
+  paddleSpawnOffset: 0.6
+  serveDelay: 1
   classicBallPrefab: {fileID: 7509275675775370816, guid: 034407c150d910042bc5a37f282eaf6a, type: 3}
   underwaterBallPrefab: {fileID: 4339559265872386991, guid: 8af0f9bca05697a44ab143e99478a372, type: 3}
   ballTypePrefabs:
@@ -1729,6 +1737,11 @@ MonoBehaviour:
     minX: -8
     maxX: 8
   moveHorizontally: 1
+--- !u!4 &1685704107 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5465320193406859863, guid: c6a4c485cd44b7f42b418f2aa817d742, type: 3}
+  m_PrefabInstance: {fileID: 565711934}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1750458469
 PrefabInstance:
   m_ObjectHideFlags: 0

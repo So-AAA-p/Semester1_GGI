@@ -145,8 +145,8 @@ Transform:
   m_GameObject: {fileID: 11391721}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 36, y: 1, z: 0}
-  m_LocalScale: {x: 35, y: 35, z: 35}
+  m_LocalPosition: {x: 35, y: -2, z: 0}
+  m_LocalScale: {x: 45, y: 45, z: 45}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 984864242}
@@ -365,8 +365,8 @@ Transform:
   m_GameObject: {fileID: 47831067}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -36, y: 7, z: 0}
-  m_LocalScale: {x: 35, y: 35, z: 35}
+  m_LocalPosition: {x: -35, y: 5, z: 0}
+  m_LocalScale: {x: 45, y: 45, z: 45}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1029243449}
@@ -452,8 +452,8 @@ Transform:
   m_GameObject: {fileID: 55733072}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -35.95, y: 1.01, z: 0}
-  m_LocalScale: {x: 35, y: 35, z: 35}
+  m_LocalPosition: {x: -35, y: -2, z: 0}
+  m_LocalScale: {x: 45, y: 45, z: 45}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1029243449}
@@ -539,8 +539,8 @@ Transform:
   m_GameObject: {fileID: 64978241}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 36, y: 13, z: 0}
-  m_LocalScale: {x: 35, y: 35, z: 35}
+  m_LocalPosition: {x: 35, y: 12, z: 0}
+  m_LocalScale: {x: 45, y: 45, z: 45}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 984864242}
@@ -626,8 +626,8 @@ Transform:
   m_GameObject: {fileID: 102007920}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 36, y: 7, z: 0}
-  m_LocalScale: {x: 35, y: 35, z: 35}
+  m_LocalPosition: {x: 35, y: 5, z: 0}
+  m_LocalScale: {x: 45, y: 45, z: 45}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1029243449}
@@ -1162,7 +1162,7 @@ Transform:
   m_GameObject: {fileID: 308371311}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 59.2, y: -17.5, z: 0}
+  m_LocalPosition: {x: 61.3, y: -17.9, z: 0}
   m_LocalScale: {x: 30, y: 30, z: 30}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -1274,7 +1274,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.5566038, g: 0.4776875, b: 0.28617838, a: 1}
+  m_Color: {r: 0.7169812, g: 0.5688414, b: 0.3551086, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1428,8 +1428,8 @@ Transform:
   m_GameObject: {fileID: 422684797}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -36, y: 7, z: 0}
-  m_LocalScale: {x: 35, y: 35, z: 35}
+  m_LocalPosition: {x: -35, y: 5, z: 0}
+  m_LocalScale: {x: 45, y: 45, z: 45}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 984864242}
@@ -1515,8 +1515,8 @@ Transform:
   m_GameObject: {fileID: 476854801}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 36, y: 1, z: 0}
-  m_LocalScale: {x: 35, y: 35, z: 35}
+  m_LocalPosition: {x: 35, y: -2, z: 0}
+  m_LocalScale: {x: 45, y: 45, z: 45}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1029243449}
@@ -1602,8 +1602,8 @@ Transform:
   m_GameObject: {fileID: 541915956}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -36, y: 13, z: 0}
-  m_LocalScale: {x: 35, y: 35, z: 35}
+  m_LocalPosition: {x: -35, y: 12, z: 0}
+  m_LocalScale: {x: 45, y: 45, z: 45}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1029243449}
@@ -1768,8 +1768,8 @@ Transform:
   m_GameObject: {fileID: 648508912}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 36, y: 13, z: 0}
-  m_LocalScale: {x: 35, y: 35, z: 35}
+  m_LocalPosition: {x: 35, y: 12, z: 0}
+  m_LocalScale: {x: 45, y: 45, z: 45}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1029243449}
@@ -2292,10 +2292,10 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0.4811321, g: 0.3775063, b: 0.20652369, a: 1}
-    m_HighlightedColor: {r: 0.4245283, g: 0.33106914, b: 0.18222678, a: 1}
-    m_PressedColor: {r: 0.3679245, g: 0.28797987, b: 0.16140084, a: 1}
-    m_SelectedColor: {r: 0.36862746, g: 0.28627452, b: 0.16078432, a: 1}
+    m_NormalColor: {r: 0.5849056, g: 0.4652495, b: 0.29521182, a: 1}
+    m_HighlightedColor: {r: 0.5471698, g: 0.43939602, b: 0.28132787, a: 1}
+    m_PressedColor: {r: 0.49056602, g: 0.39051992, b: 0.24759701, a: 1}
+    m_SelectedColor: {r: 0.4901961, g: 0.3921569, b: 0.24705884, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -2649,6 +2649,7 @@ MonoBehaviour:
   WinnerText: {fileID: 174794484}
   ResetButton: {fileID: 18200520}
   BTMenu: {fileID: 780685613}
+  Visuals: {fileID: 686005268}
   gridWidth: 4
   gridHeight: 4
   fieldbuttons:
@@ -3067,6 +3068,7 @@ GameObject:
   - component: {fileID: 1058426611}
   - component: {fileID: 1058426610}
   - component: {fileID: 1058426609}
+  - component: {fileID: 1058426612}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -3192,6 +3194,19 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &1058426612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1058426607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0ef8050ccbd254cb9031864d6d8f1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetAspectRatio: 1.7777778
 --- !u!1 &1115594122
 GameObject:
   m_ObjectHideFlags: 0
@@ -3218,9 +3233,9 @@ Transform:
   m_GameObject: {fileID: 1115594122}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -36, y: 13, z: 0}
-  m_LocalScale: {x: 35, y: 35, z: 35}
-  m_ConstrainProportionsScale: 1
+  m_LocalPosition: {x: -35, y: 12, z: 0}
+  m_LocalScale: {x: 45, y: 45, z: 45}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 984864242}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3581,8 +3596,8 @@ Transform:
   m_GameObject: {fileID: 1187232499}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 36, y: 7, z: 0}
-  m_LocalScale: {x: 35, y: 35, z: 35}
+  m_LocalPosition: {x: 35, y: 5, z: 0}
+  m_LocalScale: {x: 45, y: 45, z: 45}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 984864242}
@@ -3833,7 +3848,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -312.5, y: -0}
+  m_AnchoredPosition: {x: -305.4, y: -0}
   m_SizeDelta: {x: -600, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1616904573
@@ -3865,8 +3880,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4280698459
-  m_fontColor: {r: 0.3584906, g: 0.27529374, b: 0.1504984, a: 1}
+    rgba: 4281161071
+  m_fontColor: {r: 0.4339623, g: 0.33355603, b: 0.1780883, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -4869,8 +4884,8 @@ Transform:
   m_GameObject: {fileID: 2011502322}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -36, y: 1, z: 0}
-  m_LocalScale: {x: 35, y: 35, z: 35}
+  m_LocalPosition: {x: -35, y: -2, z: 0}
+  m_LocalScale: {x: 45, y: 45, z: 45}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 984864242}
@@ -5395,8 +5410,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4289778400
-  m_fontColor: {r: 0.8773585, g: 0.82285166, b: 0.69112676, a: 1}
+    rgba: 4288792805
+  m_fontColor: {r: 0.8962264, g: 0.78621995, b: 0.629895, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

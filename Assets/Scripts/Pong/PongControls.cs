@@ -11,8 +11,8 @@ namespace Pong
 
         public float paddleSpeed;
 
-        public float minY = -2.5f;
-        public float maxY = 2.5f;
+        public float minY = -10f;
+        public float maxY = 10f;
 
         public float minX = -4.5f;
         public float maxX = 4.5f;

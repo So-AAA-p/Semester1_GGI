@@ -63,7 +63,6 @@ namespace Pong
         [Header("Teleportation")]
         public bool canTeleport = false;
 
-
         [Header("Materials")]
         public Material defaultMaterial;
         public Material underwaterMaterial;
@@ -87,11 +86,10 @@ namespace Pong
         private Material runtimeMaterial;
 
 
-
-
-
-
-
+        void Awake()
+        {
+            rb = GetComponent<Rigidbody2D>();
+        }
 
         void Start()
         {
@@ -210,7 +208,7 @@ namespace Pong
 
         void IncreaseSpeedOverTime()
         {
-            currentSpeed += speedIncreasePerSecond * (Time.deltaTime / 2);
+            currentSpeed += speedIncreasePerSecond * ((3 * Time.deltaTime) / 2 );
             currentSpeed = Mathf.Min(currentSpeed, maxSpeed);                       // Math.Min nimmt einfach den kleineren der beiden folgeneden Werte, hier wichtig, damit die Geschwindigkeit das Geschwindigkeitsmaximum nicht �bertrifft
 
             rb.linearVelocity = rb.linearVelocity.normalized * currentSpeed;        // .normalized beh�lt die selbe richtung an und �ndert die l�nge bzw magnitude des Vektors zu 1, diese wird dann sp�ter auf die geschwindigkeit (currentspeed) ge�ndert 
@@ -274,6 +272,9 @@ namespace Pong
 
         void OnTriggerEnter2D(Collider2D other)
         {
+            if (PongManager.instance.currentLevel != PongManager.LevelType.BallTypes)
+                return;
+
             if (isServing)
                 return;
 
@@ -303,15 +304,25 @@ namespace Pong
         {
             lastTeleporter = teleporter;
 
-            Vector3 exitPos = teleporter.exitPoint.position;
+            // Preserve current Y
+            float preservedY = rb.position.y;
+
+            // Take X from exit point
+            float exitX = teleporter.exitPoint.position.x;
+
+            // Build final position
+            Vector2 exitPos = new Vector2(exitX, preservedY);
+
+            // Exit direction from teleporter
             Vector2 exitNormal = teleporter.exitDirection.normalized;
-            float safeOffset = 0.6f; // slightly bigger than before
 
-            rb.position = (Vector2)exitPos + exitNormal * safeOffset;
+            float safeOffset = 0.9f; // nicht weniger! ansonsten krise
 
+            rb.position = exitPos + exitNormal * safeOffset;
+
+            // Preserve direction & speed
             Vector2 preservedDir = rb.linearVelocity.normalized;
             rb.linearVelocity = preservedDir * currentSpeed;
-
         }
 
         void OnTriggerExit2D(Collider2D other)
@@ -354,6 +365,13 @@ namespace Pong
 
         public void PrepareServe(Vector2 direction)
         {
+            if (rb == null)
+            {
+                Debug.LogError("Rigidbody2D is NULL on PongBall!", this);
+                return;
+            }
+
+            Debug.Log("PrepareServe called with dir: " + direction);
             rb.linearVelocity = Vector2.zero;
             isServing = true;
             serveDirection = direction;
