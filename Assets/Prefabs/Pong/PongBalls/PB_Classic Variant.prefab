@@ -34,15 +34,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3748474165778261584, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: m_LocalScale.x
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3748474165778261584, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: m_LocalScale.y
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3748474165778261584, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: m_LocalScale.z
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3748474165778261584, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: m_LocalPosition.x
@@ -120,6 +120,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: PB_Classic Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 7416478971553313021, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: m_Radius
+      value: 0.16
+      objectReference: {fileID: 0}
+    - target: {fileID: 7416478971553313021, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: ballType
       value: 0
@@ -138,7 +146,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: shrinkFactor
-      value: 0.5
+      value: 0.95
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
