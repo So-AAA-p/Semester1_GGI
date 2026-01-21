@@ -269,8 +269,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 922179029}
-        m_TargetAssemblyTypeName: TicTacToe.TicTacBloomMan, Assembly-CSharp
+      - m_Target: {fileID: 1635264056}
+        m_TargetAssemblyTypeName: ScenesManager, Assembly-CSharp
         m_MethodName: RestartGame
         m_Mode: 1
         m_Arguments:
@@ -2315,8 +2315,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 922179029}
-        m_TargetAssemblyTypeName: TicTacToe.TicTacBloomMan, Assembly-CSharp
+      - m_Target: {fileID: 1635264056}
+        m_TargetAssemblyTypeName: ScenesManager, Assembly-CSharp
         m_MethodName: BackToMenu
         m_Mode: 1
         m_Arguments:
@@ -3950,6 +3950,74 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1616904571}
   m_CullTransparentMesh: 1
+--- !u!1001 &1635264055
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4487117619419059484, guid: f39410b38b866df4d9c016819eb2af84, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.94
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487117619419059484, guid: f39410b38b866df4d9c016819eb2af84, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487117619419059484, guid: f39410b38b866df4d9c016819eb2af84, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487117619419059484, guid: f39410b38b866df4d9c016819eb2af84, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487117619419059484, guid: f39410b38b866df4d9c016819eb2af84, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487117619419059484, guid: f39410b38b866df4d9c016819eb2af84, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487117619419059484, guid: f39410b38b866df4d9c016819eb2af84, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487117619419059484, guid: f39410b38b866df4d9c016819eb2af84, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487117619419059484, guid: f39410b38b866df4d9c016819eb2af84, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487117619419059484, guid: f39410b38b866df4d9c016819eb2af84, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4878269509472845064, guid: f39410b38b866df4d9c016819eb2af84, type: 3}
+      propertyPath: m_Name
+      value: SCENESMANAGER
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f39410b38b866df4d9c016819eb2af84, type: 3}
+--- !u!114 &1635264056 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2410792710829417769, guid: f39410b38b866df4d9c016819eb2af84, type: 3}
+  m_PrefabInstance: {fileID: 1635264055}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3fdef837ae14ed469374f1adf964a39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &1660805540 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 841374787089402241, guid: 7f7929434cc86074b86e23ba352fa24d, type: 3}
@@ -5749,3 +5817,4 @@ SceneRoots:
   - {fileID: 602372988}
   - {fileID: 922179028}
   - {fileID: 706877048}
+  - {fileID: 1635264055}

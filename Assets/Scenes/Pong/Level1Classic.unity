@@ -131,6 +131,34 @@ PrefabInstance:
       propertyPath: m_Name
       value: Menu
       objectReference: {fileID: 0}
+    - target: {fileID: 6403908178264223904, guid: cd5e4893cd1fa1041a791a89672d1e3b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6403908178264223904, guid: cd5e4893cd1fa1041a791a89672d1e3b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6403908178264223904, guid: cd5e4893cd1fa1041a791a89672d1e3b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 726359010}
+    - target: {fileID: 6403908178264223904, guid: cd5e4893cd1fa1041a791a89672d1e3b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6403908178264223904, guid: cd5e4893cd1fa1041a791a89672d1e3b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: BackToPongMenu
+      objectReference: {fileID: 0}
+    - target: {fileID: 6403908178264223904, guid: cd5e4893cd1fa1041a791a89672d1e3b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: ScenesManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6403908178264223904, guid: cd5e4893cd1fa1041a791a89672d1e3b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 6416287695577552914, guid: cd5e4893cd1fa1041a791a89672d1e3b, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -407,6 +435,74 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3ef1d7c63bc738545a9ceda1ebc79474, type: 3}
+--- !u!1001 &726359009
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4487117619419059484, guid: f39410b38b866df4d9c016819eb2af84, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.94
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487117619419059484, guid: f39410b38b866df4d9c016819eb2af84, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487117619419059484, guid: f39410b38b866df4d9c016819eb2af84, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487117619419059484, guid: f39410b38b866df4d9c016819eb2af84, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487117619419059484, guid: f39410b38b866df4d9c016819eb2af84, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487117619419059484, guid: f39410b38b866df4d9c016819eb2af84, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487117619419059484, guid: f39410b38b866df4d9c016819eb2af84, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487117619419059484, guid: f39410b38b866df4d9c016819eb2af84, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487117619419059484, guid: f39410b38b866df4d9c016819eb2af84, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487117619419059484, guid: f39410b38b866df4d9c016819eb2af84, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4878269509472845064, guid: f39410b38b866df4d9c016819eb2af84, type: 3}
+      propertyPath: m_Name
+      value: SCENESMANAGER
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f39410b38b866df4d9c016819eb2af84, type: 3}
+--- !u!114 &726359010 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2410792710829417769, guid: f39410b38b866df4d9c016819eb2af84, type: 3}
+  m_PrefabInstance: {fileID: 726359009}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3fdef837ae14ed469374f1adf964a39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &899680792
 GameObject:
   m_ObjectHideFlags: 0
@@ -1020,6 +1116,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PongGoal (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 3156939045327740914, guid: 42c129016e4fef042bbfc7b1381f58f2, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6705377780989321189, guid: 42c129016e4fef042bbfc7b1381f58f2, type: 3}
       propertyPath: player
       value: 1
@@ -1029,17 +1129,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 42c129016e4fef042bbfc7b1381f58f2, type: 3}
---- !u!114 &2027628782 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6403908178264223904, guid: cd5e4893cd1fa1041a791a89672d1e3b, type: 3}
-  m_PrefabInstance: {fileID: 69942546}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &2045614724
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1169,7 +1258,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9d4bd0c94ecae44494ff409d6f74537, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BTMenu: {fileID: 2027628782}
 --- !u!4 &2121415295
 Transform:
   m_ObjectHideFlags: 0
@@ -1198,7 +1286,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentLevel: 0
-  BallPrefab: {fileID: 6202663051245857347, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
   gameOverObject: {fileID: 905499422}
   gameStartObject: {fileID: 1576690128}
   enter: {fileID: 0}
@@ -1206,6 +1293,10 @@ MonoBehaviour:
   scoretext: {fileID: 955667347}
   winnertext: {fileID: 1755091485}
   maxPoints: 5
+  leftPaddle: {fileID: 0}
+  rightPaddle: {fileID: 0}
+  paddleSpawnOffset: 0.25
+  serveDelay: 1
   classicBallPrefab: {fileID: 7509275675775370816, guid: 034407c150d910042bc5a37f282eaf6a, type: 3}
   underwaterBallPrefab: {fileID: 4339559265872386991, guid: 8af0f9bca05697a44ab143e99478a372, type: 3}
   ballTypePrefabs:
@@ -1308,7 +1399,15 @@ PrefabInstance:
     - target: {fileID: 5402541043971520907, guid: cebfa601c0f771743a877be88126ba01, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 2121415296}
+      objectReference: {fileID: 726359010}
+    - target: {fileID: 5402541043971520907, guid: cebfa601c0f771743a877be88126ba01, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: RestartGame
+      objectReference: {fileID: 0}
+    - target: {fileID: 5402541043971520907, guid: cebfa601c0f771743a877be88126ba01, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: ScenesManager, Assembly-CSharp
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1394,6 +1493,26 @@ PrefabInstance:
       propertyPath: controls.paddleSpeed
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 8489853299833888319, guid: 4992fc2c0c9340f428c7cf3be8de5161, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 195090576, guid: 439e996789ac57341841dfb7069b285c, type: 3}
+    - target: {fileID: 8489853299833888319, guid: 4992fc2c0c9340f428c7cf3be8de5161, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8489853299833888319, guid: 4992fc2c0c9340f428c7cf3be8de5161, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8489853299833888319, guid: 4992fc2c0c9340f428c7cf3be8de5161, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8489853299833888319, guid: 4992fc2c0c9340f428c7cf3be8de5161, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1621,6 +1740,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PongGoal
       objectReference: {fileID: 0}
+    - target: {fileID: 3156939045327740914, guid: 42c129016e4fef042bbfc7b1381f58f2, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1844,3 +1967,4 @@ SceneRoots:
   - {fileID: 1533779299}
   - {fileID: 899680795}
   - {fileID: 2121415295}
+  - {fileID: 726359009}

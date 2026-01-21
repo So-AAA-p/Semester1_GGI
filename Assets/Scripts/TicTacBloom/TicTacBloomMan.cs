@@ -418,15 +418,5 @@ namespace TicTacToe
             gameOver = false;
             UpdateInfoText();
         }
-
-        public void RestartGame()
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }
-
-        public void BackToMenu()
-        {
-            SceneManager.LoadScene(0);
-        }
     }
 }

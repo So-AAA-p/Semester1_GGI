@@ -223,12 +223,6 @@ namespace Pong
         }
 
 
-        public void RestartGame()
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }
-
-
             //  void ConfigureBall(PongBall ball)
             //  {
             //      ball.canShrink = false;
