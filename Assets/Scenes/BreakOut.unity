@@ -127,6 +127,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1533779299}
     m_Modifications:
+    - target: {fileID: 496897786778187868, guid: cd5e4893cd1fa1041a791a89672d1e3b, type: 3}
+      propertyPath: m_fontSize
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 496897786778187868, guid: cd5e4893cd1fa1041a791a89672d1e3b, type: 3}
+      propertyPath: m_fontStyle
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 496897786778187868, guid: cd5e4893cd1fa1041a791a89672d1e3b, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 1893820895662435090, guid: cd5e4893cd1fa1041a791a89672d1e3b, type: 3}
       propertyPath: m_Name
       value: Menu
@@ -1392,11 +1404,11 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 69942547}
   - {fileID: 955667346}
   - {fileID: 905499423}
   - {fileID: 1576690129}
   - {fileID: 1204826139}
+  - {fileID: 69942547}
   - {fileID: 777311784}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

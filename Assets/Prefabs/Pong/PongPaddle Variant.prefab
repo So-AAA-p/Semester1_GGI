@@ -90,8 +90,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controls:
-    UpKey: 273
-    DownKey: 274
-    paddleSpeed: 5
+    PositiveKey: 119
+    NegativeKey: 115
+    paddleSpeed: 8
     minY: -2.5
     maxY: 2.5
+    minX: -4.5
+    maxX: 4.5
+  moveHorizontally: 0
+  sizeStep: 0.3
+  minHeight: 1
+  maxHeight: 4

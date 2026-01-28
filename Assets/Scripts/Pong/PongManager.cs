@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 using System.Collections;
@@ -57,7 +57,7 @@ namespace Pong
 
 
 
-        private void Awake()                                                                // Awake() wird vor Start() ausgeführt; nimmt man, wenn Reihenfolgen eine Rolle spielen
+        private void Awake()                                                                // Awake() wird vor Start() ausgefÃ¼hrt; nimmt man, wenn Reihenfolgen eine Rolle spielen
         {
             if (instance == null)
                 instance = this;
@@ -80,9 +80,9 @@ namespace Pong
         void Update()
         {
             if (Input.GetKeyDown(KeyCode.Return))
-                Debug.Log("ENTER PRESSED");
+                //Debug.Log("ENTER PRESSED");
 
-            if (currentState == GameState.Start && Input.GetKeyDown(KeyCode.Return))        //GetKeyDown gilt nur für einen frame, also passiert nichts beim halten der taste
+            if (currentState == GameState.Start && Input.GetKeyDown(KeyCode.Return))        //GetKeyDown gilt nur fÃ¼r einen frame, also passiert nichts beim halten der taste
             {
                 StartGame();
             }
@@ -133,7 +133,7 @@ namespace Pong
 
         public void OnGoalScored(Player player)
         {
-            if (currentState != GameState.Playing)                                          // beugt vor, das ein Tor gemacht werden kann, wenn das spiel nicht läuft
+            if (currentState != GameState.Playing)                                          // beugt vor, das ein Tor gemacht werden kann, wenn das spiel nicht lÃ¤uft
                 return;
 
             if (player == Player.Player1)
@@ -172,7 +172,13 @@ namespace Pong
 
                 case LevelType.BallTypes:
                     prefabToSpawn = GetRandomBallTypePrefab();
-                    break;
+
+                    if (prefabToSpawn != null)
+                    {
+                        Debug.Log($"[LEVEL 3] Spawned ball prefab: {prefabToSpawn.name}");
+                        SpawnBallAtPaddle(prefabToSpawn);
+                    }
+                    return; // â¬… IMPORTANT: stop here, don't Instantiate below
             }
 
             if (prefabToSpawn == null)
@@ -181,14 +187,7 @@ namespace Pong
                 return;
             }
 
-            if (currentLevel == LevelType.BallTypes)
-            {
-                SpawnBallAtPaddle(prefabToSpawn);
-            }
-            else
-            {
-                Instantiate(prefabToSpawn);
-            }
+            Instantiate(prefabToSpawn);
         }
 
 

@@ -169,14 +169,27 @@ MonoBehaviour:
   speedIncreasePerSecond: 1
   maxSpeed: 20
   minYComponent: 0.3
+  ballType: 0
+  launchMode: 0
+  canShrink: 0
   shrinkFactor: 0.95
   minScale: 0.3
-  canShrink: 0
   isLiquid: 1
   liquidDrag: 1.2
   liquidBounceDamping: 0.9
+  canTeleport: 0
   defaultMaterial: {fileID: 0}
   underwaterMaterial: {fileID: 2100000, guid: dc6f5870f9644224f84e10a4d268837c, type: 2}
+  canSquish: 0
+  squishAmount: 0.25
+  squishReturnSpeed: 10
+  maxSquishImpactSpeed: 20
+  maxSquishMultiplier: 1.5
+  maxWobbleStrength: 0.4
+  wobbleFadeSpeed: 2
+  successFlashDuration: 0.15
+  blockedFlashDuration: 0.08
+  unstableAngleVariance: 33
 --- !u!96 &-2561340588544997903
 TrailRenderer:
   serializedVersion: 3

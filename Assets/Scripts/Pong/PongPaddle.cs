@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 namespace Pong
 {
@@ -13,19 +14,68 @@ namespace Pong
         }
 
         public bool moveHorizontally = false;
+        private bool sizeLocked;
 
+        [Header("Size Modifiers")]
+        public float sizeStep = 0.3f;
+        public float minHeight = 1.0f;
+        public float maxHeight = 4.0f;
+
+        private SpriteRenderer sr;
+        private Color originalColor;
+
+        public static readonly Color DarkGreen = new Color(0.2f, 0.5f, 0.2f);
+        public static readonly Color DarkRed = new Color(0.5f, 0.2f, 0.2f);
+
+        void Awake()
+        {
+            sr = GetComponent<SpriteRenderer>();
+            originalColor = sr.color;
+        }
+
+        public bool ModifySize(float delta)
+        {
+            Vector3 scale = transform.localScale;
+            float oldY = scale.y;
+
+            scale.y += delta;
+            scale.y = Mathf.Clamp(scale.y, minHeight, maxHeight);
+
+            transform.localScale = scale;
+
+            // return true if size actually changed
+            return !Mathf.Approximately(oldY, scale.y);
+        }
+
+        void UnlockSize()
+        {
+            sizeLocked = false;
+        }
+
+        public void Flash(Color flashColor, float duration)
+        {
+            StopAllCoroutines();
+            StartCoroutine(FlashRoutine(flashColor, duration));
+        }
+
+        IEnumerator FlashRoutine(Color flashColor, float duration)
+        {
+            sr.color = flashColor;
+            yield return new WaitForSeconds(duration);
+            sr.color = originalColor; // your #E0B46E color
+        }
 
 
         void Update()
         {
             if(Input.GetKey(controls.PositiveKey))
             {
-                Debug.Log("Nach unten gedrückt");
+                //Debug.Log("Nach unten gedrückt");
                 Move(Direction.Positive);
             }
             if (Input.GetKey(controls.NegativeKey))
             {
-                Debug.Log("Nach oben gedrückt");
+                //Debug.Log("Nach oben gedrückt");
                 Move(Direction.Negative);
             }
         }
@@ -61,7 +111,7 @@ namespace Pong
                     transform.position.z
                 );
             }
-            Debug.Log(direction.ToString() + "gedrückt");
+            //Debug.Log(direction.ToString() + "gedrückt");
         }
     }
 }

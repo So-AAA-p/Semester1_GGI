@@ -60,6 +60,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5213010960384970659, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: m_Color.b
+      value: 0.13725491
+      objectReference: {fileID: 0}
+    - target: {fileID: 5213010960384970659, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: m_Color.g
+      value: 0.43529412
+      objectReference: {fileID: 0}
+    - target: {fileID: 5213010960384970659, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: m_Color.r
+      value: 0.62352943
+      objectReference: {fileID: 0}
+    - target: {fileID: 5213010960384970659, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 749b9069dc4742c5bfa5c74644049926, type: 2}
     - target: {fileID: 6202663051245857347, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: m_Name
       value: PB_Unstable Variant
@@ -75,6 +91,50 @@ PrefabInstance:
     - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: launchMode
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: switchColor.g
+      value: 0.20784314
+      objectReference: {fileID: 0}
+    - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: unstableColor.b
+      value: 0.13725491
+      objectReference: {fileID: 0}
+    - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: unstableColor.g
+      value: 0.43529412
+      objectReference: {fileID: 0}
+    - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: unstableColor.r
+      value: 0.62352943
+      objectReference: {fileID: 0}
+    - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: paddleDecreaseColor.b
+      value: 0.33333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: paddleDecreaseColor.g
+      value: 0.18431373
+      objectReference: {fileID: 0}
+    - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: paddleDecreaseColor.r
+      value: 0.34117648
+      objectReference: {fileID: 0}
+    - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: paddleIncreaseColor.b
+      value: 0.28627452
+      objectReference: {fileID: 0}
+    - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: paddleIncreaseColor.g
+      value: 0.11764706
+      objectReference: {fileID: 0}
+    - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: paddleIncreaseColor.r
+      value: 0.48235294
+      objectReference: {fileID: 0}
+    - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: unstableAngleVariance
+      value: 40
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

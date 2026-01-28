@@ -14,13 +14,11 @@ namespace Pong
         private float currentSpeed;
         public float minYComponent = 0.3f;                                          // prevents flat horizontal movement
 
-        private Vector2 lastVelocity;
-
         private bool isSquished;
-        private bool teleportLocked;
         private bool isServing;
-        private Vector2 serveDirection;
 
+        private Vector2 serveDirection;
+        private Vector2 lastVelocity;
         private Vector3 baseScale;
         private Vector3 originalScale;
 
@@ -46,6 +44,12 @@ namespace Pong
 
         [Header("Launch")]
         public LaunchMode launchMode = LaunchMode.Auto;
+
+        [Header("Ball Colors")]
+        public Color paddleIncreaseColor = new Color(0.88f, 0.70f, 0.43f); // #E0B46E
+        public Color paddleDecreaseColor = new Color(0.88f, 0.70f, 0.43f);
+        public Color unstableColor = new Color(0.75f, 0.2f, 0.9f);
+        public Color switchColor = new Color(0.61f, 0.21f, 0.05f); // #9C350D
 
         [Header("LEVEL FEATURES")]
         [Header("Ball Shrinking")]
@@ -82,9 +86,23 @@ namespace Pong
         public float maxWobbleStrength = 0.4f;
         public float wobbleFadeSpeed = 2f;
 
+        [Header("Paddle Effect Flash")]
+        public float successFlashDuration = 0.15f;
+        public float blockedFlashDuration = 0.08f;
+
+        [Header("Unstable Ball")]
+        public float unstableAngleVariance = 20f; // degrees, kann bis 30-40 gesetzt werden, wenn man böse sein will tehe (sehr chaotisch)
+
+        [Header("Switch Ball")]
+        public float switchDelay = 10f;
+        public Color switchBlinkColor = new Color(0.44f, 0.14f, 0.04f); // #6F2409
+        public float minBlinkInterval = 0.05f;
+        public float maxBlinkInterval = 0.6f;
+
         private float currentWobble;
         private Material runtimeMaterial;
 
+        
 
         void Awake()
         {
@@ -115,6 +133,11 @@ namespace Pong
                 isServing = true;
                 rb.linearVelocity = Vector2.zero;
             }
+
+            if (ballType == BallType.Switch)
+            {
+                StartCoroutine(SwitchRoutine());
+            }
         }
 
         void LaunchImmediately()
@@ -127,13 +150,64 @@ namespace Pong
             rb.linearVelocity = dir * currentSpeed;
         }
 
+        IEnumerator SwitchRoutine()
+        {
+            float elapsed = 0f;
+            Color baseColor = sr.color;
+
+            while (elapsed < switchDelay)
+            {
+                float t = elapsed / switchDelay;
+
+                // Blink faster over time
+                float blinkInterval = Mathf.Lerp(maxBlinkInterval, minBlinkInterval, t);
+
+                sr.color = switchBlinkColor;
+                yield return new WaitForSeconds(blinkInterval * 0.2f);
+
+                sr.color = baseColor;
+                yield return new WaitForSeconds(blinkInterval * 0.2f);
+
+                elapsed += blinkInterval;
+            }
+
+            sr.color = baseColor;
+            SwitchToRandomBall();
+        }
+
+        void SwitchToRandomBall()
+        {
+            BallType[] options =
+            {
+        BallType.PaddleIncrease,
+        BallType.PaddleDecrease,
+        BallType.Unstable
+    };
+
+            BallType newType = options[Random.Range(0, options.Length)];
+
+            ballType = newType;
+            Debug.Log("[SwitchBall] Switching to " + newType);
+            ApplyBallType();
+        }
+
         void ApplyBallType()
         {
-            // defaults
+            // ===== FULL RESET =====
             canShrink = false;
             isLiquid = false;
             canSquish = false;
             canTeleport = true;
+
+            rb.linearDamping = 0f;
+            currentWobble = 0f;
+
+            transform.localScale = originalScale;
+            baseScale = originalScale;
+
+            //sr.color = Color.white;
+
+            // ======================
 
             switch (ballType)
             {
@@ -161,8 +235,30 @@ namespace Pong
                 case BallType.Switch:
                     break;
             }
+            ApplyBallColor();
         }
 
+        void ApplyBallColor()
+        {
+            switch (ballType)
+            {
+                case BallType.PaddleIncrease:
+                    sr.color = paddleIncreaseColor;
+                    break;
+
+                case BallType.PaddleDecrease:
+                    sr.color = paddleDecreaseColor;
+                    break;
+
+                case BallType.Unstable:
+                    sr.color = unstableColor;
+                    break;
+
+                case BallType.Switch:
+                    sr.color = switchColor;
+                    break;
+            }
+        }
 
         void Update()
         {
@@ -216,29 +312,54 @@ namespace Pong
 
         void OnCollisionEnter2D(Collision2D collision)
         {
+            bool hitPaddle = collision.gameObject.CompareTag("PPaddle");
+
             if (isServing)
                 return;
 
             Vector2 incomingVelocity = lastVelocity;
             float impactSpeed = incomingVelocity.magnitude;
 
-            int layer = collision.gameObject.layer;
             Vector2 normal = collision.contacts[0].normal;
 
+            // =====================
+            // PADDLE EFFECT SECTION
+            // =====================
+            if (hitPaddle)
+            {
+                //Debug.Log("[Ball] Hit paddle");
 
-            // Always reflect
+                if (ballType == BallType.PaddleIncrease || ballType == BallType.PaddleDecrease)
+                {
+                    PongPaddle paddle = collision.gameObject.GetComponent<PongPaddle>();
+
+                    if (paddle != null)
+                    {
+                        //Debug.Log("[Ball] Applying paddle effect");
+                        ApplyPaddleEffect(paddle);
+                    }
+                    else
+                    {
+                        //Debug.LogWarning("[Ball] Paddle has no PongPaddle component!");
+                    }
+                }
+            }
+
+            // =====================
+            // PHYSICS / BOUNCE LOGIC
+            // =====================
             Vector2 reflected = Vector2.Reflect(incomingVelocity, normal);
             Vector2 dir = reflected.normalized;
 
+            // Liquid damping
             if (isLiquid)
             {
                 reflected *= liquidBounceDamping;
                 dir = reflected.normalized;
             }
 
-
-            // ONLY enforce angle when hitting paddles
-            if (layer == LayerMask.NameToLayer("PongPaddles") && canShrink)
+            // Angle enforcement (classic safety net)
+            if (hitPaddle && canShrink)
             {
                 ShrinkBall();
 
@@ -249,15 +370,23 @@ namespace Pong
                 }
             }
 
+            // 🔥 UNSTABLE BALL MODIFIER (ONLY ON PADDLES)
+            if (ballType == BallType.Unstable && hitPaddle)
+            {
+                dir = ApplyUnstableAngle(dir);
+            }
+
+            // Apply final velocity
             rb.linearVelocity = dir * currentSpeed;
 
-            float squishStrength = Mathf.InverseLerp(0f, maxSquishImpactSpeed, impactSpeed);
-
-            float scaledSquish = squishAmount * Mathf.Lerp(0.5f, maxSquishMultiplier, squishStrength);
-
-
+            // =====================
+            // SQUISH / WOBBLE
+            // =====================
             if (canSquish)
             {
+                float squishStrength = Mathf.InverseLerp(0f, maxSquishImpactSpeed, impactSpeed);
+                float scaledSquish = squishAmount * Mathf.Lerp(0.5f, maxSquishMultiplier, squishStrength);
+
                 float wobbleFromImpact = Mathf.InverseLerp(5f, 25f, impactSpeed);
                 float targetWobble = wobbleFromImpact * maxWobbleStrength;
 
@@ -270,15 +399,50 @@ namespace Pong
             }
         }
 
+        Vector2 ApplyUnstableAngle(Vector2 dir)
+        {
+            // Reduce chaos as speed increases
+            float speedFactor = Mathf.InverseLerp(0f, maxSpeed, currentSpeed);
+            float angleVariance = Mathf.Lerp(
+                unstableAngleVariance,
+                unstableAngleVariance * 0.4f, // late-game calmer
+                speedFactor
+            );
+
+            float randomAngle = Random.Range(-angleVariance, angleVariance);
+            return (Quaternion.Euler(0f, 0f, randomAngle) * dir).normalized;
+        }
+
+        void ApplyPaddleEffect(PongPaddle paddle)
+        {
+            bool changed;
+
+            switch (ballType)
+            {
+                case BallType.PaddleIncrease:
+                    changed = paddle.ModifySize(+paddle.sizeStep);
+                    paddle.Flash(
+                        changed ? Color.green : PongPaddle.DarkGreen,
+                        changed ? successFlashDuration : blockedFlashDuration
+                    );
+                    break;
+
+                case BallType.PaddleDecrease:
+                    changed = paddle.ModifySize(-paddle.sizeStep);
+                    paddle.Flash(
+                        changed ? Color.red : PongPaddle.DarkRed,
+                        changed ? successFlashDuration : blockedFlashDuration
+                    );
+                    break;
+            }
+        }
+
         void OnTriggerEnter2D(Collider2D other)
         {
             if (PongManager.instance.currentLevel != PongManager.LevelType.BallTypes)
                 return;
 
             if (isServing)
-                return;
-
-            if (teleportLocked)
                 return;
 
             if (!canTeleport)
@@ -334,12 +498,6 @@ namespace Pong
             }
         }
 
-        IEnumerator UnlockTeleportNextPhysicsFrame()
-        {
-            yield return new WaitForFixedUpdate();
-            teleportLocked = false;
-        }
-
         void ShrinkBall()
         {
             baseScale *= shrinkFactor;
@@ -356,22 +514,23 @@ namespace Pong
             rb.linearDamping = liquidDrag;
         }
 
-        public void SetLiquidVisual(bool isLiquid)
+        public void SetLiquidVisual(bool liquid)
         {
-            if (sr == null) return;
+            if (sr == null)
+                return;
 
-            sr.material = isLiquid ? underwaterMaterial : defaultMaterial;
+            sr.material = liquid ? underwaterMaterial : defaultMaterial;
         }
 
         public void PrepareServe(Vector2 direction)
         {
             if (rb == null)
             {
-                Debug.LogError("Rigidbody2D is NULL on PongBall!", this);
+                //Debug.LogError("Rigidbody2D is NULL on PongBall!", this);
                 return;
             }
 
-            Debug.Log("PrepareServe called with dir: " + direction);
+            // Debug.Log("PrepareServe called with dir: " + direction);
             rb.linearVelocity = Vector2.zero;
             isServing = true;
             serveDirection = direction;
