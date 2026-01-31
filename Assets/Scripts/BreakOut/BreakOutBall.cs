@@ -16,6 +16,10 @@ namespace BreakOut
         private Vector2 lastVelocity;
         public float ballstartvelocity;
 
+        void Awake()
+        {
+            rb = GetComponent<Rigidbody2D>();
+        }
 
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
@@ -32,7 +36,15 @@ namespace BreakOut
             Vector2 direction = new Vector2(side, angle).normalized;
             rb.linearVelocity = direction * currentSpeed;
         }
+        public Vector2 GetVelocity()
+        {
+            return rb.linearVelocity;
+        }
 
+        public void SetVelocity(Vector2 velocity)
+        {
+            rb.linearVelocity = velocity;
+        }
 
         // Update is called once per frame
         void Update()
@@ -47,7 +59,7 @@ namespace BreakOut
 
         void IncreaseSpeedOverTime()
         {
-            currentSpeed += speedIncreasePerSecond * Time.deltaTime;
+            currentSpeed += speedIncreasePerSecond * ((3 * Time.deltaTime) / 2);
             currentSpeed = Mathf.Min(currentSpeed, maxSpeed);                       
 
             rb.linearVelocity = rb.linearVelocity.normalized * currentSpeed;       

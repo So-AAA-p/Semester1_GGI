@@ -165,3 +165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5af7ba4378e642d4faa21d08c5f527a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speedIncreasePerSecond: 0.5
+  maxSpeed: 15
+  minYComponent: 0.3
+  ballstartvelocity: 0

@@ -665,7 +665,7 @@ GameObject:
   - component: {fileID: 777311784}
   - component: {fileID: 777311785}
   m_Layer: 0
-  m_Name: Bricks
+  m_Name: BlockSpawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -702,11 +702,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 959ae318a6001f14ab3a3413eceae2b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  brickPrefab: {fileID: 5255656297969096373, guid: 2443acc0c16c1794085bbc4f241d218d, type: 3}
-  rows: 5
-  columns: 13
-  brickWidth: 1.2
-  brickHeight: 0.5
+  normalBlock: {fileID: 5255656297969096373, guid: 2443acc0c16c1794085bbc4f241d218d, type: 3}
+  sugarBlock: {fileID: 1335782958241323879, guid: f2f2de720a4c66f47948e69f4f0d664f, type: 3}
+  eggBlock: {fileID: 6759443378431239828, guid: 1517d0af5568f4e4b9984106460f7e8c, type: 3}
+  saltBlock: {fileID: 5993342029019743376, guid: c6a25060428e04d4fb8fbd12dd53db9e, type: 3}
+  sugarChance: 0.08
+  eggChance: 0.12
+  saltChance: 0.1
+  rows: 3
+  columns: 5
+  brickWidth: 2
+  brickHeight: 1
   spacing: 0.01
   topOffset: 4
 --- !u!1 &887467143 stripped
@@ -729,7 +735,7 @@ MonoBehaviour:
   controls:
     LeftKey: 276
     RightKey: 275
-    paddleSpeed: 4
+    paddleSpeed: 8
     minX: -7.5
     maxX: 7.5
 --- !u!1 &899680792
@@ -1863,7 +1869,9 @@ MonoBehaviour:
   ballstartvelocity: 5
   scoretext: {fileID: 955667347}
   losertext: {fileID: 1755091485}
-  lives: 5
+  lives: 10
+  maxBalls: 4
+  minBallScale: 0.6
 --- !u!1001 &3029535806291022420
 PrefabInstance:
   m_ObjectHideFlags: 0

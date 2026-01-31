@@ -2,16 +2,14 @@ using UnityEngine;
 
 namespace BreakOut
 {
-public class BreakoutDeathZone : MonoBehaviour
-{
-    private void OnTriggerExit2D(Collider2D other)
+    public class BreakoutDeathZone : MonoBehaviour
     {
-        // Lebenspunkt abziehen und neuen Ball spawnen
-        BreakOutManager.instance.OnDeath();
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            BreakOutBall ball = other.GetComponent<BreakOutBall>();
+            if (ball == null) return;
 
-        // diesen Ball zerstören
-        Destroy(other.gameObject);
+            BreakOutManager.instance.RemoveBall(ball);
+        }
     }
-}
-
 }

@@ -1,6 +1,6 @@
-using UnityEngine;
+using System.Collections.Generic;
 using TMPro;
-using UnityEngine.SceneManagement;
+using UnityEngine;
 
 namespace BreakOut
 {
@@ -10,9 +10,13 @@ namespace BreakOut
         public enum GameState
         {
             Start,
-            Playing,
-            GameDone
+            Stage1,
+            Stage2,
+            Boss,
+            Transition,
+            GameOver
         }
+
         private GameState currentState = GameState.Start;
 
         public static BreakOutManager instance;
@@ -31,7 +35,11 @@ namespace BreakOut
         private uint deaths;                                                                // uint wie normales int, aber ohne negativen Zahlen
         public int lives = 5;
 
-        // private GameState currentState;
+        [Header("Ball Control")]
+        public int maxBalls = 3;
+        public float minBallScale = 0.6f;
+
+        private List<BreakOutBall> activeBalls = new List<BreakOutBall>();
 
 
 
@@ -63,14 +71,14 @@ namespace BreakOut
 
         void StartGame()
         {
-            currentState = GameState.Playing;
+            currentState = GameState.Stage1;
             gameStartObject.SetActive(false);
-            ResetBall();
+            SpawnBall();
         }
 
         public void OnDeath()
         {
-            if (currentState != GameState.Playing)                                          // beugt vor, das ein Tor gemacht werden kann, wenn das spiel nicht läuft
+            if (!IsPlayableState())
                 return;
             deaths++;
 
@@ -80,16 +88,53 @@ namespace BreakOut
                 GameOver();
 
             else
-                ResetBall();
-
-
+                SpawnBall();
         }
 
-        public void ResetBall()
+        bool IsPlayableState()
         {
-            if (currentState != GameState.Playing) return;
+            return currentState == GameState.Stage1
+                || currentState == GameState.Stage2
+                || currentState == GameState.Boss;
+        }
 
-            Instantiate(BallPrefab);               // Quaternion.identity sorgt dafür, dass der Ball keine Rotation hat
+        public void SpawnBall()
+        {
+            if (currentState != GameState.Stage1 &&
+                currentState != GameState.Stage2 &&
+                currentState != GameState.Boss)
+                return;
+
+            if (activeBalls.Count >= maxBalls)
+                return;
+
+            GameObject ballObj = Instantiate(BallPrefab);
+            BreakOutBall ball = ballObj.GetComponent<BreakOutBall>();
+
+            activeBalls.Add(ball);
+        }
+        public void RemoveBall(BreakOutBall ball)
+        {
+            if (activeBalls.Contains(ball))
+                activeBalls.Remove(ball);
+
+            Destroy(ball.gameObject);
+
+            // Each ball costs a life
+            deaths++;
+            UpdateDeathCount();
+
+            if (deaths >= lives)
+            {
+                GameOver();
+                return;
+            }
+
+            // Ensure at least one ball exists
+            if (activeBalls.Count == 0)
+            {
+                SpawnBall();
+            }
         }
 
         public void UpdateDeathCount()
@@ -99,18 +144,32 @@ namespace BreakOut
 
         void GameOver()
         {
+            currentState = GameState.GameOver;
             gameOverObject.SetActive(true);
             losertext.text = "You lost :(";
+
+            ClearAllBalls();
+        }
+        void ClearAllBalls()
+        {
+            foreach (BreakOutBall ball in activeBalls)
+            {
+                if (ball != null)
+                    Destroy(ball.gameObject);
+            }
+
+            activeBalls.Clear();
         }
 
-        public void RestartGame()
+        public int GetActiveBallCount()
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            return activeBalls.Count;
         }
 
-        public void ReturnToMenu()
+        public void RegisterBall(BreakOutBall ball)
         {
-            SceneManager.LoadScene(0);
+            if (!activeBalls.Contains(ball))
+                activeBalls.Add(ball);
         }
 
     }

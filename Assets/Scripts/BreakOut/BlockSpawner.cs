@@ -2,10 +2,18 @@ using UnityEngine;
 
 namespace BreakOut
 {
-    public class BrickGrid : MonoBehaviour
+    public class BlockSpawner : MonoBehaviour
     {
-        [Header("References")]
-        public GameObject brickPrefab;
+        [Header("Brick Prefabs")]
+        public GameObject normalBlock;
+        public GameObject sugarBlock;
+        public GameObject eggBlock;
+        public GameObject saltBlock;
+
+        [Header("Spawn Chances (0–1)")] // wahrscheinlichkeiten zu blöcken hinzugefügt, damit gameplay nicht zu schwer und chaotisch wird -> zb 5 sugar blöcke -> 10 bälle im game
+        [Range(0f, 1f)] public float sugarChance = 0.08f;
+        [Range(0f, 1f)] public float eggChance = 0.12f;
+        [Range(0f, 1f)] public float saltChance = 0.1f;
 
         [Header("Grid Size")]
         public int rows = 5;
@@ -39,9 +47,30 @@ namespace BreakOut
                         startPosition.y - row * (brickHeight + spacing)
                     );
 
-                    Instantiate(brickPrefab, spawnPos, Quaternion.identity, transform);
+                    GameObject brick = PickBrick();
+                    Instantiate(brick, spawnPos, Quaternion.identity, transform);
                 }
             }
+        }
+
+        GameObject PickBrick()
+        {
+            float roll = Random.value;
+
+            if (roll < sugarChance)
+                return sugarBlock;
+
+            roll -= sugarChance;
+
+            if (roll < eggChance)
+                return eggBlock;
+
+            roll -= eggChance;
+
+            if (roll < saltChance)
+                return saltBlock;
+
+            return normalBlock;
         }
 
         Vector2 CalculateStartPosition()
@@ -57,5 +86,4 @@ namespace BreakOut
         }
     }
 }
-
 

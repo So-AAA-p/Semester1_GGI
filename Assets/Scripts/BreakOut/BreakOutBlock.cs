@@ -1,9 +1,30 @@
 using UnityEngine;
 
-public class BreakOutBlock : MonoBehaviour
+namespace BreakOut
 {
-   private void OnCollisionEnter2D(Collision2D collision)
+    public class BreakOutBlock : MonoBehaviour
     {
-        Destroy(gameObject);
+        public int hitsRequired = 1;
+        protected int currentHits;
+
+        protected virtual void Start()
+        {
+            currentHits = hitsRequired;
+        }
+
+        protected virtual void OnCollisionEnter2D(Collision2D collision)
+        {
+            currentHits--;
+
+            if (currentHits <= 0)
+            {
+                OnBreak();
+            }
+        }
+
+        protected virtual void OnBreak()
+        {
+            Destroy(gameObject);
+        }
     }
 }
