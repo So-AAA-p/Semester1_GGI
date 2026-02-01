@@ -20,6 +20,14 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 0.7122642
       objectReference: {fileID: 0}
+    - target: {fileID: 4562193660575645637, guid: 2443acc0c16c1794085bbc4f241d218d, type: 3}
+      propertyPath: hitsRequired
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4562193660575645637, guid: 2443acc0c16c1794085bbc4f241d218d, type: 3}
+      propertyPath: milkOverlayPrefab
+      value: 
+      objectReference: {fileID: 4652384275005579615, guid: ada9d7fb558a74840acb9ea343e4465e, type: 3}
     - target: {fileID: 5255656297969096373, guid: 2443acc0c16c1794085bbc4f241d218d, type: 3}
       propertyPath: m_Name
       value: BOB_Milk Variant
@@ -64,8 +72,33 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4562193660575645637, guid: 2443acc0c16c1794085bbc4f241d218d, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5255656297969096373, guid: 2443acc0c16c1794085bbc4f241d218d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 73079993800368066}
   m_SourcePrefab: {fileID: 100100000, guid: 2443acc0c16c1794085bbc4f241d218d, type: 3}
+--- !u!1 &2335674319174734686 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5255656297969096373, guid: 2443acc0c16c1794085bbc4f241d218d, type: 3}
+  m_PrefabInstance: {fileID: 7531756791912695275}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &73079993800368066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2335674319174734686}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a661339cca2964458ce7b636729180a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitsRequired: 1
+  milkOverlayPrefab: {fileID: 4652384275005579615, guid: ada9d7fb558a74840acb9ea343e4465e, type: 3}
+  gridPosition: {x: 0, y: 0}
+  dripDelay: 0.15

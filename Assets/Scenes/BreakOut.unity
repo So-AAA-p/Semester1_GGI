@@ -706,14 +706,16 @@ MonoBehaviour:
   sugarBlock: {fileID: 1335782958241323879, guid: f2f2de720a4c66f47948e69f4f0d664f, type: 3}
   eggBlock: {fileID: 6759443378431239828, guid: 1517d0af5568f4e4b9984106460f7e8c, type: 3}
   saltBlock: {fileID: 5993342029019743376, guid: c6a25060428e04d4fb8fbd12dd53db9e, type: 3}
+  milkBlock: {fileID: 2335674319174734686, guid: 7e3f46b9e8158d3499a70ed3a4743c13, type: 3}
   sugarChance: 0.08
   eggChance: 0.12
   saltChance: 0.1
-  rows: 3
+  milkChance: 0.05
+  rows: 5
   columns: 5
   brickWidth: 2
   brickHeight: 1
-  spacing: 0.01
+  spacing: 0
   topOffset: 4
 --- !u!1 &887467143 stripped
 GameObject:
@@ -1871,7 +1873,7 @@ MonoBehaviour:
   losertext: {fileID: 1755091485}
   lives: 10
   maxBalls: 4
-  minBallScale: 0.6
+  minBallScale: 0.7
 --- !u!1001 &3029535806291022420
 PrefabInstance:
   m_ObjectHideFlags: 0
