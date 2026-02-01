@@ -64,8 +64,32 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4562193660575645637, guid: 2443acc0c16c1794085bbc4f241d218d, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5255656297969096373, guid: 2443acc0c16c1794085bbc4f241d218d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7490718143602042685}
   m_SourcePrefab: {fileID: 100100000, guid: 2443acc0c16c1794085bbc4f241d218d, type: 3}
+--- !u!1 &5993342029019743376 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5255656297969096373, guid: 2443acc0c16c1794085bbc4f241d218d, type: 3}
+  m_PrefabInstance: {fileID: 2000573900477043237}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7490718143602042685
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5993342029019743376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35971e4e48f44aa43a19c631dc56d3d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitsRequired: 1
+  milkOverlayPrefab: {fileID: 4652384275005579615, guid: ada9d7fb558a74840acb9ea343e4465e, type: 3}
+  gridPosition: {x: 0, y: 0}

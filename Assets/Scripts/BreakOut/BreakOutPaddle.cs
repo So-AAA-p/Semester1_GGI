@@ -12,16 +12,43 @@ namespace BreakOut
             Left
         }
 
+        private SpriteRenderer spriteRenderer;
+
+        [Header("Paddle Colors")]
+        public Color normalColor = Color.white;
+        public Color reversedColor = new Color(1f, 0.4f, 0.4f); // light red
+
+
+        void Start()
+        {
+            spriteRenderer = GetComponent<SpriteRenderer>();
+            UpdatePaddleColor();
+        }
+
+        void UpdatePaddleColor()
+        {
+            if (spriteRenderer == null) return;
+
+            spriteRenderer.color =
+                BreakOutManager.instance.controlsReversed
+                ? reversedColor
+                : normalColor;
+        }
+
         void Update()
         {
+            bool reversed = BreakOutManager.instance.controlsReversed;
+
+            UpdatePaddleColor();
+
             if (Input.GetKey(controls.LeftKey))
             {
-                Move(Direction.Left);
+                Move(reversed ? Direction.Right : Direction.Left);
             }
 
             if (Input.GetKey(controls.RightKey))
             {
-                Move(Direction.Right);
+                Move(reversed ? Direction.Left : Direction.Right);
             }
         }
 

@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3151596866016035212}
   m_Layer: 0
   m_Name: BreakOutBall
-  m_TagString: Untagged
+  m_TagString: BreakOutBall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

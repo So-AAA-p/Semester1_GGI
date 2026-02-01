@@ -11,12 +11,14 @@ namespace BreakOut
         public GameObject eggBlock;
         public GameObject saltBlock;
         public GameObject milkBlock;
+        public GameObject flourBlock;
 
         [Header("Spawn Chances (0–1)")] // wahrscheinlichkeiten zu blöcken hinzugefügt, damit gameplay nicht zu schwer und chaotisch wird -> zb 5 sugar blöcke -> 10 bälle im game
         [Range(0f, 1f)] public float sugarChance = 0.08f;
         [Range(0f, 1f)] public float eggChance = 0.12f;
         [Range(0f, 1f)] public float saltChance = 0.1f;
         [Range(0f, 1f)] public float milkChance = 0.08f;
+        [Range(0f, 1f)] public float flourChance = 0.1f;
 
         [Header("Grid Size")]
         public int rows = 5;
@@ -60,7 +62,7 @@ namespace BreakOut
                         startPosition.y - row * (brickHeight + spacing)
                     );
 
-                    GameObject prefab = PickBrick();
+                    GameObject prefab = PickBrick(row);
                     GameObject instance = Instantiate(prefab, spawnPos, Quaternion.identity, transform);
 
                     BreakOutBlock block = instance.GetComponent<BreakOutBlock>();
@@ -99,7 +101,7 @@ namespace BreakOut
             }
         }
 
-        GameObject PickBrick()
+        GameObject PickBrick(int currentRow)
         {
             float roll = Random.value;
 
@@ -115,9 +117,16 @@ namespace BreakOut
                 return saltBlock;
             roll -= saltChance;
 
-            if (roll < milkChance)
-                return milkBlock;
-            roll -= milkChance;
+            if (currentRow <= 1)
+            {
+                if (roll < milkChance)
+                    return milkBlock;
+                roll -= milkChance;
+            }
+
+            if (roll < flourChance)
+                return flourBlock;
+            roll -= flourChance;
 
             return normalBlock;
         }
@@ -137,6 +146,19 @@ namespace BreakOut
         public void RemoveBlock(Vector2Int pos)
         {
             blockGrid.Remove(pos);
+        }
+        public void OnBlockDestroyed(Vector2Int pos)
+        {
+            if (blockGrid.Remove(pos))
+            {
+                Debug.Log($"[Blocks] Remaining: {blockGrid.Count}");
+
+                if (blockGrid.Count == 0)
+                {
+                    Debug.Log("[Stage] All blocks cleared!");
+                    BreakOutManager.instance.OnStageCleared();
+                }
+            }
         }
     }
 }

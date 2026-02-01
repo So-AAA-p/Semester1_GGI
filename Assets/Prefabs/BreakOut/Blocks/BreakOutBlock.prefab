@@ -147,5 +147,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33fbfd6223bf56848bf253031ce936b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hitsRequired: 2
+  hitsRequired: 1
   milkOverlayPrefab: {fileID: 4652384275005579615, guid: ada9d7fb558a74840acb9ea343e4465e, type: 3}
+  gridPosition: {x: 0, y: 0}

@@ -41,7 +41,7 @@ namespace BreakOut
 
         private List<BreakOutBall> activeBalls = new List<BreakOutBall>();
 
-
+        public bool controlsReversed = false;
 
         private void Awake()                                                                // Awake() wird vor Start() ausgeführt; nimmt man, wenn Reihenfolgen eine Rolle spielen
         {
@@ -170,6 +170,35 @@ namespace BreakOut
         {
             if (!activeBalls.Contains(ball))
                 activeBalls.Add(ball);
+        }
+
+
+        public void ToggleControls()
+        {
+            controlsReversed = !controlsReversed;
+            Debug.Log($"[Salt] Controls reversed = {controlsReversed}");
+        }
+
+        public void OnStageCleared()
+        {
+            if (currentState != GameState.Stage1)
+                return;
+
+            Debug.Log("[Game] Stage 1 complete!");
+
+            gameOverObject.SetActive(true);
+
+            // Destroy all active balls
+            GameObject[] balls = GameObject.FindGameObjectsWithTag("BreakOutBall");
+            foreach (GameObject ball in balls)
+            {
+                Destroy(ball);
+            }
+
+            currentState = GameState.Transition;
+
+            // TEMP: simple placeholder behavior
+            // Later this will trigger the sliding background, stage 2 spawn, etc.
         }
 
     }

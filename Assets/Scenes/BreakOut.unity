@@ -707,10 +707,12 @@ MonoBehaviour:
   eggBlock: {fileID: 6759443378431239828, guid: 1517d0af5568f4e4b9984106460f7e8c, type: 3}
   saltBlock: {fileID: 5993342029019743376, guid: c6a25060428e04d4fb8fbd12dd53db9e, type: 3}
   milkBlock: {fileID: 2335674319174734686, guid: 7e3f46b9e8158d3499a70ed3a4743c13, type: 3}
+  flourBlock: {fileID: 397295377919231241, guid: 2f39489967550dc40b3e8a34ce68b933, type: 3}
   sugarChance: 0.08
   eggChance: 0.12
   saltChance: 0.1
   milkChance: 0.05
+  flourChance: 0.1
   rows: 5
   columns: 5
   brickWidth: 2
@@ -740,6 +742,8 @@ MonoBehaviour:
     paddleSpeed: 8
     minX: -7.5
     maxX: 7.5
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  reversedColor: {r: 1, g: 0.4, b: 0.4, a: 1}
 --- !u!1 &899680792
 GameObject:
   m_ObjectHideFlags: 0
@@ -870,7 +874,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.2830189, g: 0.2830189, b: 0.2830189, a: 0.6745098}
+  m_Color: {r: 0.5802827, g: 0.745283, b: 0.376157, a: 0.6745098}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1603,7 +1607,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 116.40277, y: 35.957397}
+  m_AnchoredPosition: {x: 109, y: 35.957397}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1755091485
@@ -1626,7 +1630,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: LALALALALALA <3
+  m_text: 'Stage 1 cleard!
+
+    Keep going!'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1653,15 +1659,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 60
+  m_fontSizeBase: 60
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_fontStyle: 1
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -1691,7 +1697,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: -487.52002, y: 0, z: -327.38623, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -1874,6 +1880,7 @@ MonoBehaviour:
   lives: 10
   maxBalls: 4
   minBallScale: 0.7
+  controlsReversed: 0
 --- !u!1001 &3029535806291022420
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1943,6 +1950,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 682708672524984412, guid: c6a4c485cd44b7f42b418f2aa817d742, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 682708672524984412, guid: c6a4c485cd44b7f42b418f2aa817d742, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 682708672524984412, guid: c6a4c485cd44b7f42b418f2aa817d742, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 682708672524984412, guid: c6a4c485cd44b7f42b418f2aa817d742, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 2903420388384742152, guid: c6a4c485cd44b7f42b418f2aa817d742, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 5465320193406859863, guid: c6a4c485cd44b7f42b418f2aa817d742, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

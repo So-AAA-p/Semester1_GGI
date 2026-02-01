@@ -75,9 +75,8 @@ namespace BreakOut
 
         protected virtual void OnBreak()
         {
-            BlockSpawner.Instance.RemoveBlock(gridPosition);
+            BlockSpawner.Instance.OnBlockDestroyed(gridPosition);
             Destroy(gameObject);
-            Debug.Log($"[Break] {name} at {gridPosition}");
         }
     }
 }
