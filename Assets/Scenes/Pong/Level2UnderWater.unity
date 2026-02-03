@@ -1869,6 +1869,9 @@ MonoBehaviour:
     minX: -8
     maxX: 8
   moveHorizontally: 1
+  sizeStep: 0.3
+  minHeight: 1
+  maxHeight: 4
 --- !u!4 &1295245107 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5465320193406859863, guid: c6a4c485cd44b7f42b418f2aa817d742, type: 3}
@@ -1925,7 +1928,7 @@ MonoBehaviour:
   ballstartvelocity: 5
   scoretext: {fileID: 1512792782}
   winnertext: {fileID: 5356882}
-  maxPoints: 5
+  maxPoints: 10
   leftPaddle: {fileID: 1295245107}
   rightPaddle: {fileID: 1685704107}
   paddleSpawnOffset: 0.6
@@ -2076,6 +2079,9 @@ MonoBehaviour:
     minX: -8
     maxX: 8
   moveHorizontally: 1
+  sizeStep: 0.3
+  minHeight: 1
+  maxHeight: 4
 --- !u!4 &1685704107 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5465320193406859863, guid: c6a4c485cd44b7f42b418f2aa817d742, type: 3}

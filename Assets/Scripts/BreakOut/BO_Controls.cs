@@ -3,7 +3,7 @@ using UnityEngine;
 namespace BreakOut
 {
     [System.Serializable]
-    public class BreakOutControls
+    public class BO_Controls
     {
         public KeyCode LeftKey = KeyCode.LeftArrow;
         public KeyCode RightKey = KeyCode.RightArrow;

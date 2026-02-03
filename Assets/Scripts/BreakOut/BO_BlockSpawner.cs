@@ -3,8 +3,16 @@ using System.Collections.Generic;
 
 namespace BreakOut
 {
-    public class BlockSpawner : MonoBehaviour
+    public class BO_BlockSpawner : MonoBehaviour
     {
+        public enum GridMode
+        {
+            IngredientBlocks,
+            LeafBlocks
+        }
+
+        public GridMode gridMode;
+
         [Header("Brick Prefabs")]
         public GameObject normalBlock;
         public GameObject sugarBlock;
@@ -12,6 +20,7 @@ namespace BreakOut
         public GameObject saltBlock;
         public GameObject milkBlock;
         public GameObject flourBlock;
+        public GameObject leafBlock;
 
         [Header("Spawn Chances (0–1)")] // wahrscheinlichkeiten zu blöcken hinzugefügt, damit gameplay nicht zu schwer und chaotisch wird -> zb 5 sugar blöcke -> 10 bälle im game
         [Range(0f, 1f)] public float sugarChance = 0.08f;
@@ -34,9 +43,9 @@ namespace BreakOut
         [Header("Vertical Offset")]
         public float topOffset = 4f;
 
-        public static BlockSpawner Instance;
+        public static BO_BlockSpawner Instance;
 
-        private Dictionary<Vector2Int, BreakOutBlock> blockGrid = new();
+        private Dictionary<Vector2Int, BO_Block> blockGrid = new();
 
 
         private void Awake()
@@ -62,26 +71,48 @@ namespace BreakOut
                         startPosition.y - row * (brickHeight + spacing)
                     );
 
-                    GameObject prefab = PickBrick(row);
+                    GameObject prefab;
+
+                    if (gridMode == GridMode.LeafBlocks)
+                    {
+                        prefab = leafBlock;
+                    }
+                    else
+                    {
+                        prefab = PickBrick(row);
+                    }
+
                     GameObject instance = Instantiate(prefab, spawnPos, Quaternion.identity, transform);
 
-                    BreakOutBlock block = instance.GetComponent<BreakOutBlock>();
+                    BO_Block block = instance.GetComponent<BO_Block>();
+                    if (block == null)
+                    {
+                        Debug.LogError($"Prefab {prefab.name} missing BO_Block!");
+                        Destroy(instance);
+                        continue;
+                    }
 
                     Vector2Int gridPos = new Vector2Int(col, row);
-
                     block.SetGridPosition(gridPos);
                     blockGrid.Add(gridPos, block);
-                    Debug.Log($"[Grid] Set {block.name} at {gridPos}");
                 }
             }
+
+            if (BO_StageController.Instance != null &&
+                BO_StageController.Instance.currentStage == BO_StageController.StageType.Stage2)
+            {
+                BO_StageController.Instance.StartStage(BO_StageController.StageType.Stage2);
+            }
+
         }
-        public BreakOutBlock GetBlockAt(Vector2Int pos)
+
+        public BO_Block GetBlockAt(Vector2Int pos)
         {
-            blockGrid.TryGetValue(pos, out BreakOutBlock block);
+            blockGrid.TryGetValue(pos, out BO_Block block);
             return block;
         }
 
-        public IEnumerable<BreakOutBlock> GetBlocksBelow(Vector2Int milkPos)
+        public IEnumerable<BO_Block> GetBlocksBelow(Vector2Int milkPos)
         {
             for (int row = milkPos.y + 1; row < rows; row++)
             {
@@ -90,7 +121,7 @@ namespace BreakOut
 
                 Debug.Log($"[Milk] Looking for block at grid {pos}");
 
-                if (!blockGrid.TryGetValue(pos, out BreakOutBlock block))
+                if (!blockGrid.TryGetValue(pos, out BO_Block block))
                 {
                     Debug.Log($"[Milk]  No block found at {pos}, skipping...");
                     continue;
@@ -156,9 +187,13 @@ namespace BreakOut
                 if (blockGrid.Count == 0)
                 {
                     Debug.Log("[Stage] All blocks cleared!");
-                    BreakOutManager.instance.OnStageCleared();
+                    BO_Manager.instance.OnStageCleared();
                 }
             }
+        }
+        public IEnumerable<BO_Block> GetAllBlocks()
+        {
+            return blockGrid.Values;
         }
     }
 }

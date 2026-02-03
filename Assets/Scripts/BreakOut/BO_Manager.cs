@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace BreakOut
 {
-    public class BreakOutManager : MonoBehaviour
+    public class BO_Manager : MonoBehaviour
     {
 
         public enum GameState
@@ -19,7 +19,7 @@ namespace BreakOut
 
         private GameState currentState = GameState.Start;
 
-        public static BreakOutManager instance;
+        public static BO_Manager instance;
 
         public GameObject BallPrefab;
         public GameObject gameOverObject;
@@ -39,7 +39,7 @@ namespace BreakOut
         public int maxBalls = 3;
         public float minBallScale = 0.6f;
 
-        private List<BreakOutBall> activeBalls = new List<BreakOutBall>();
+        private List<BO_Ball> activeBalls = new List<BO_Ball>();
 
         public bool controlsReversed = false;
 
@@ -109,11 +109,11 @@ namespace BreakOut
                 return;
 
             GameObject ballObj = Instantiate(BallPrefab);
-            BreakOutBall ball = ballObj.GetComponent<BreakOutBall>();
+            BO_Ball ball = ballObj.GetComponent<BO_Ball>();
 
             activeBalls.Add(ball);
         }
-        public void RemoveBall(BreakOutBall ball)
+        public void RemoveBall(BO_Ball ball)
         {
             if (activeBalls.Contains(ball))
                 activeBalls.Remove(ball);
@@ -152,7 +152,7 @@ namespace BreakOut
         }
         void ClearAllBalls()
         {
-            foreach (BreakOutBall ball in activeBalls)
+            foreach (BO_Ball ball in activeBalls)
             {
                 if (ball != null)
                     Destroy(ball.gameObject);
@@ -166,7 +166,7 @@ namespace BreakOut
             return activeBalls.Count;
         }
 
-        public void RegisterBall(BreakOutBall ball)
+        public void RegisterBall(BO_Ball ball)
         {
             if (!activeBalls.Contains(ball))
                 activeBalls.Add(ball);

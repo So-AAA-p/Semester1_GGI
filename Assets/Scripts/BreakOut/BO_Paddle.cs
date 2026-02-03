@@ -2,9 +2,9 @@ using UnityEngine;
 
 namespace BreakOut
 {
-    public class BreakOutPaddle : MonoBehaviour
+    public class BO_Paddle : MonoBehaviour
     {
-        public BreakOutControls controls = new BreakOutControls();
+        public BO_Controls controls = new BO_Controls();
 
         public enum Direction
         {
@@ -30,14 +30,14 @@ namespace BreakOut
             if (spriteRenderer == null) return;
 
             spriteRenderer.color =
-                BreakOutManager.instance.controlsReversed
+                BO_Manager.instance.controlsReversed
                 ? reversedColor
                 : normalColor;
         }
 
         void Update()
         {
-            bool reversed = BreakOutManager.instance.controlsReversed;
+            bool reversed = BO_Manager.instance.controlsReversed;
 
             UpdatePaddleColor();
 
@@ -80,6 +80,20 @@ namespace BreakOut
             else
             {
                 transform.Translate(moveVector);
+            }
+        }
+
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            if (collision.CompareTag("BO_Blueberry"))
+            {
+                // 1. Tell the manager we caught one!
+                BO_BlueberryManager.Instance.CollectBerry();
+
+                // 2. Play a sound or effect here if you want!
+
+                // 3. Destroy the falling berry object
+                Destroy(collision.gameObject);
             }
         }
     }

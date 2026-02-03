@@ -86,6 +86,10 @@ namespace Pong
         public float maxWobbleStrength = 0.4f;
         public float wobbleFadeSpeed = 2f;
 
+        [Header("Underwater Curve")]
+        public float liquidCurveStrength = 0.6f;
+        public float liquidCurveFrequency = 1.5f;
+
         [Header("Paddle Effect Flash")]
         public float successFlashDuration = 0.15f;
         public float blockedFlashDuration = 0.08f;
@@ -286,6 +290,7 @@ namespace Pong
             if (isLiquid)
             {
                 ApplyLiquidDrag();
+                ApplyLiquidCurve();
             }
         }
 
@@ -370,7 +375,7 @@ namespace Pong
                 }
             }
 
-            // 🔥 UNSTABLE BALL MODIFIER (ONLY ON PADDLES)
+            //  UNSTABLE BALL MODIFIER (ONLY ON PADDLES)
             if (ballType == BallType.Unstable && hitPaddle)
             {
                 dir = ApplyUnstableAngle(dir);
@@ -462,8 +467,6 @@ namespace Pong
             Teleport(teleporter);
         }
 
-
-
         void Teleport(BallTeleporter teleporter)
         {
             lastTeleporter = teleporter;
@@ -512,6 +515,28 @@ namespace Pong
         void ApplyLiquidDrag()
         {
             rb.linearDamping = liquidDrag;
+        }
+
+        void ApplyLiquidCurve()
+        {
+            // Only Level 2 + Underwater ball
+            if (PongManager.instance.currentLevel != PongManager.LevelType.UnderWater)
+                return;
+
+            if (ballType != BallType.UnderWater)
+                return;
+
+            Vector2 velocity = rb.linearVelocity;
+            if (velocity.sqrMagnitude < 0.01f)
+                return;
+
+            // Perpendicular direction (90° rotation)
+            Vector2 perpendicular = new Vector2(-velocity.y, velocity.x).normalized;
+
+            // Smooth oscillation (feels like water current)
+            float curve = Mathf.Sin(Time.time * liquidCurveFrequency);
+
+            rb.AddForce(perpendicular * curve * liquidCurveStrength, ForceMode2D.Force);
         }
 
         public void SetLiquidVisual(bool liquid)

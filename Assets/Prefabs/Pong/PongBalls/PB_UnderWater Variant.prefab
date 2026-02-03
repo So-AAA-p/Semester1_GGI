@@ -9,16 +9,64 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -2561340588544997903, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: m_ApplyActiveColorSpace
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -2561340588544997903, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: -2561340588544997903, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: m_Parameters.colorGradient.atime1
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: -2561340588544997903, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: m_Parameters.colorGradient.ctime0
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -2561340588544997903, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: m_Parameters.colorGradient.ctime1
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: -2561340588544997903, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: m_Parameters.colorGradient.key0.a
+      value: 0.84313726
+      objectReference: {fileID: 0}
+    - target: {fileID: -2561340588544997903, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: m_Parameters.colorGradient.key0.b
-      value: 0.4716981
+      value: 0.41509432
       objectReference: {fileID: 0}
     - target: {fileID: -2561340588544997903, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: m_Parameters.colorGradient.key0.g
-      value: 0.36790678
+      value: 0.25023508
       objectReference: {fileID: 0}
     - target: {fileID: -2561340588544997903, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: m_Parameters.colorGradient.key0.r
-      value: 0.20692416
+      value: 0.072445706
+      objectReference: {fileID: 0}
+    - target: {fileID: -2561340588544997903, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: m_Parameters.colorGradient.key1.a
+      value: 0.84313726
+      objectReference: {fileID: 0}
+    - target: {fileID: -2561340588544997903, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: m_Parameters.colorGradient.key1.b
+      value: 0.63529414
+      objectReference: {fileID: 0}
+    - target: {fileID: -2561340588544997903, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: m_Parameters.colorGradient.key1.g
+      value: 0.43529415
+      objectReference: {fileID: 0}
+    - target: {fileID: -2561340588544997903, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: m_Parameters.colorGradient.key1.r
+      value: 0.21960786
+      objectReference: {fileID: 0}
+    - target: {fileID: -2561340588544997903, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: m_Parameters.colorGradient.m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -2561340588544997903, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: m_Parameters.widthCurve.m_Curve.Array.data[0].time
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -2561340588544997903, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: m_Parameters.widthCurve.m_Curve.Array.data[1].time
@@ -26,7 +74,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -2561340588544997903, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: m_Parameters.widthCurve.m_Curve.Array.data[0].value
-      value: 0.74627435
+      value: 0.70082223
       objectReference: {fileID: 0}
     - target: {fileID: -2561340588544997903, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: m_Parameters.widthCurve.m_Curve.Array.data[1].value
@@ -76,6 +124,22 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5213010960384970659, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: m_Color.b
+      value: 0.6392157
+      objectReference: {fileID: 0}
+    - target: {fileID: 5213010960384970659, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: m_Color.g
+      value: 0.43529415
+      objectReference: {fileID: 0}
+    - target: {fileID: 5213010960384970659, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: m_Color.r
+      value: 0.21960786
+      objectReference: {fileID: 0}
+    - target: {fileID: 5213010960384970659, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
     - target: {fileID: 6202663051245857347, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: m_Name
       value: PB_UnderWater Variant
@@ -83,6 +147,10 @@ PrefabInstance:
     - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: ballType
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: maxSpeed
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: canSquish
@@ -103,6 +171,10 @@ PrefabInstance:
     - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: liquidBounceDamping
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: liquidCurveStrength
+      value: 0.99
       objectReference: {fileID: 0}
     - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: maxSquishMultiplier
@@ -138,6 +210,10 @@ MonoBehaviour:
   minYComponent: 0.3
   ballType: 1
   launchMode: 0
+  paddleIncreaseColor: {r: 0.88, g: 0.7, b: 0.43, a: 1}
+  paddleDecreaseColor: {r: 0.88, g: 0.7, b: 0.43, a: 1}
+  unstableColor: {r: 0.75, g: 0.2, b: 0.9, a: 1}
+  switchColor: {r: 0.61, g: 0.21, b: 0.05, a: 1}
   canShrink: 0
   shrinkFactor: 0.95
   minScale: 0.3
@@ -154,3 +230,12 @@ MonoBehaviour:
   maxSquishMultiplier: 1.5
   maxWobbleStrength: 0.4
   wobbleFadeSpeed: 2
+  liquidCurveStrength: 0.6
+  liquidCurveFrequency: 1.5
+  successFlashDuration: 0.15
+  blockedFlashDuration: 0.08
+  unstableAngleVariance: 20
+  switchDelay: 10
+  switchBlinkColor: {r: 0.44, g: 0.14, b: 0.04, a: 1}
+  minBlinkInterval: 0.05
+  maxBlinkInterval: 0.6

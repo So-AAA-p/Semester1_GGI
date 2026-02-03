@@ -4,7 +4,7 @@ using System.Collections;
 namespace BreakOut
 {
     [RequireComponent(typeof(SpriteRenderer))]
-    public class FlourCloudEffect : MonoBehaviour
+    public class BO_FlourCloudEffect : MonoBehaviour
     {
         [Header("Fade Settings")]
         public float holdTime = 1.0f; // How long it stays fully white/opaque

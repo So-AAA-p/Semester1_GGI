@@ -2,7 +2,7 @@
 
 namespace BreakOut
 {
-    public class SugarBlock : BreakOutBlock
+    public class BO_SugarBlock : BO_Block
     {
         [Header("Sugar Settings")]
         public GameObject ballPrefab;
@@ -17,12 +17,12 @@ namespace BreakOut
 
         void SplitBall()
         {
-            BreakOutBall originalBall = FindObjectOfType<BreakOutBall>();
+            BO_Ball originalBall = FindObjectOfType<BO_Ball>();
             if (originalBall == null) return;
 
             // Respect size cap
             if (originalBall.transform.localScale.x <=
-                BreakOutManager.instance.minBallScale)
+                BO_Manager.instance.minBallScale)
                 return;
 
             Vector2 originalVelocity = originalBall.GetVelocity();
@@ -39,7 +39,7 @@ namespace BreakOut
 
             newBallObj.transform.localScale = originalBall.transform.localScale;
 
-            BreakOutBall newBall = newBallObj.GetComponent<BreakOutBall>();
+            BO_Ball newBall = newBallObj.GetComponent<BO_Ball>();
 
             // 🔹 Only the NEW ball gets angle offset
             Vector2 newVelocity =
@@ -47,7 +47,7 @@ namespace BreakOut
 
             newBall.SetVelocity(newVelocity);
 
-            BreakOutManager.instance.RegisterBall(newBall);
+            BO_Manager.instance.RegisterBall(newBall);
         }
     }
 }

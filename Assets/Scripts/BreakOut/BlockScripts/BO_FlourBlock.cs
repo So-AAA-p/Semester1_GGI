@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace BreakOut
 {
-    public class FlourBlock : BreakOutBlock
+    public class BO_FlourBlock : BO_Block
     {
         [Header("Flour Effect")]
         public GameObject flourOverlayPrefab;

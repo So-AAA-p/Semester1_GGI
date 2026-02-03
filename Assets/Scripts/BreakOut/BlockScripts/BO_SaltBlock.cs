@@ -2,11 +2,11 @@ using UnityEngine;
 
 namespace BreakOut
 {
-    public class SaltBlock : BreakOutBlock
+    public class BO_SaltBlock : BO_Block
     {
         protected override void OnBreak()
         {
-            BreakOutManager.instance.ToggleControls();
+            BO_Manager.instance.ToggleControls();
             base.OnBreak();
         }
     }

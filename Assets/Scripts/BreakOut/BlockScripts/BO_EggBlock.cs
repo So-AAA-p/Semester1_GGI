@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace BreakOut
 {
-    public class EggBlock : BreakOutBlock // -> eggblock erbt von breakoutblock und ist kein monobehaviour
+    public class BO_EggBlock : BO_Block // -> eggblock erbt von breakoutblock und ist kein monobehaviour
     {
         [Header("Egg Crack Sprites")]
         public Sprite[] crackStages;

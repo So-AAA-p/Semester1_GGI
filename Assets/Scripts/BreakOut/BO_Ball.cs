@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace BreakOut
 {
-    public class BreakOutBall : MonoBehaviour
+    public class BO_Ball : MonoBehaviour
     {
         private Rigidbody2D rb;
 
@@ -35,7 +35,7 @@ namespace BreakOut
             }
 
             // 2. Find the paddle automatically
-            BreakOutPaddle paddle = FindObjectOfType<BreakOutPaddle>();
+            BO_Paddle paddle = FindObjectOfType<BO_Paddle>();
 
             if (paddle != null)
             {

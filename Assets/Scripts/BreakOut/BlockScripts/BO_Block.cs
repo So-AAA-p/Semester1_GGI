@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace BreakOut
 {
-    public class BreakOutBlock : MonoBehaviour
+    public class BO_Block : MonoBehaviour
     {
         public int hitsRequired = 1;
         protected int currentHits;
@@ -19,8 +19,6 @@ namespace BreakOut
         public void SetGridPosition(Vector2Int pos)
         {
             gridPosition = pos;
-            Debug.Log($"[Grid] {name} assigned grid {gridPosition}");
-
         }
 
         protected virtual void Start()
@@ -75,7 +73,7 @@ namespace BreakOut
 
         protected virtual void OnBreak()
         {
-            BlockSpawner.Instance.OnBlockDestroyed(gridPosition);
+            BO_BlockSpawner.Instance.OnBlockDestroyed(gridPosition);
             Destroy(gameObject);
         }
     }
