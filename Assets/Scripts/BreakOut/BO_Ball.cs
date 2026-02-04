@@ -4,6 +4,8 @@ namespace BreakOut
 {
     public class BO_Ball : MonoBehaviour
     {
+        public static BO_Ball Instance; 
+
         private Rigidbody2D rb;
 
         [Header("Movement Settings")]
@@ -18,9 +20,10 @@ namespace BreakOut
         private Vector2 paddleOffset;
 
         private Vector2 lastVelocity;
-
+        
         void Awake()
         {
+            Instance = this;
             rb = GetComponent<Rigidbody2D>();
         }
 
@@ -149,6 +152,16 @@ namespace BreakOut
         public Vector2 GetVelocity()
         {
             return rb.linearVelocity;
+        }
+
+        public void StopBall()
+        {
+            Rigidbody2D rb = GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector2.zero; // Stops movement
+                rb.isKinematic = true;      // Prevents physics from moving it again
+            }
         }
     }
 }

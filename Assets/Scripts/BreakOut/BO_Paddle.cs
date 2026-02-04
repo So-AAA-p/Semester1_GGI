@@ -5,7 +5,8 @@ namespace BreakOut
     public class BO_Paddle : MonoBehaviour
     {
         public BO_Controls controls = new BO_Controls();
-
+        public static BO_Paddle Instance;
+        
         public enum Direction
         {
             Right,
@@ -18,6 +19,8 @@ namespace BreakOut
         public Color normalColor = Color.white;
         public Color reversedColor = new Color(1f, 0.4f, 0.4f); // light red
 
+
+        private void Awake() { Instance = this; }
 
         void Start()
         {

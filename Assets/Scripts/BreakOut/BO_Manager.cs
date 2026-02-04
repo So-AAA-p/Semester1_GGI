@@ -12,6 +12,7 @@ namespace BreakOut
             Start,
             Stage1,
             Stage2,
+            BakingMiniGame,
             Boss,
             Transition,
             GameOver
@@ -58,12 +59,32 @@ namespace BreakOut
         void Start()
         {
             gameOverObject.SetActive(false);
-            gameStartObject.SetActive(true);
+
+            // If we are testing Stage 2+ in the Inspector, skip the start screen
+            if (BO_StageController.Instance != null &&
+                BO_StageController.Instance.currentStage != BO_StageController.StageType.Stage1)
+            {
+                gameStartObject.SetActive(false);
+                // StageController.Start() already calls SetState, so we just need to spawn the ball
+                SpawnBall();
+            }
+            else
+            {
+                currentState = GameState.Start;
+                gameStartObject.SetActive(true);
+            }
         }
+
+        public void SetState(GameState s) 
+        { 
+            currentState = s; 
+        
+       }
 
         void Update()
         {
-            if (currentState == GameState.Start && Input.GetKeyDown(KeyCode.Return))        //GetKeyDown gilt nur für einen frame, also passiert nichts beim halten der taste
+            // ONLY allow Enter to work if we are in the very first Start state
+            if (currentState == GameState.Start && Input.GetKeyDown(KeyCode.Return))
             {
                 StartGame();
             }
@@ -100,19 +121,15 @@ namespace BreakOut
 
         public void SpawnBall()
         {
-            if (currentState != GameState.Stage1 &&
-                currentState != GameState.Stage2 &&
-                currentState != GameState.Boss)
-                return;
-
-            if (activeBalls.Count >= maxBalls)
+            // Safety check: Don't spawn if we are in transition or have enough balls
+            if (currentState == GameState.Transition || activeBalls.Count >= maxBalls)
                 return;
 
             GameObject ballObj = Instantiate(BallPrefab);
             BO_Ball ball = ballObj.GetComponent<BO_Ball>();
-
             activeBalls.Add(ball);
         }
+
         public void RemoveBall(BO_Ball ball)
         {
             if (activeBalls.Contains(ball))
@@ -181,25 +198,41 @@ namespace BreakOut
 
         public void OnStageCleared()
         {
-            if (currentState != GameState.Stage1)
+            // 1. HARD GATE: If we aren't in a playable stage, ignore this entirely.
+            if (currentState != GameState.Stage1 && currentState != GameState.Stage2)
                 return;
 
-            Debug.Log("[Game] Stage 1 complete!");
+            Debug.Log("OnStageCleared called! Current Stage: " + BO_StageController.Instance.currentStage);
 
-            gameOverObject.SetActive(true);
-
-            // Destroy all active balls
-            GameObject[] balls = GameObject.FindGameObjectsWithTag("BreakOutBall");
-            foreach (GameObject ball in balls)
-            {
-                Destroy(ball);
-            }
-
+            // 2. Set state to Transition immediately to block further calls
             currentState = GameState.Transition;
 
-            // TEMP: simple placeholder behavior
-            // Later this will trigger the sliding background, stage 2 spawn, etc.
-        }
+            if (BO_StageController.Instance.currentStage == BO_StageController.StageType.Stage2 ||
+                BO_StageController.Instance.currentStage == BO_StageController.StageType.BakingMinigame)
+            {
+                BO_StageController.Instance.OnStage2Complete();
+            }
 
+            else if (BO_StageController.Instance.currentStage == BO_StageController.StageType.Stage1)
+            {
+                Debug.Log("[Game] Stage 1 complete!");
+
+                // gameOverObject.SetActive(true);
+
+                // Destroy all active balls
+                GameObject[] balls = GameObject.FindGameObjectsWithTag("BreakOutBall");
+                foreach (GameObject ball in balls)
+                {
+                    Destroy(ball);
+                }
+
+                Debug.Log("[Game] Stage 1 complete!");
+                currentState = GameState.Transition;
+
+                // TEMP: simple placeholder behavior
+                // Later this will trigger the sliding background, stage 2 spawn, etc.
+
+            }
+        }
     }
 }

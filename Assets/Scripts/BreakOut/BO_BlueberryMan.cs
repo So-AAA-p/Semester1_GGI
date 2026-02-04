@@ -72,52 +72,57 @@ namespace BreakOut
 
         public void OnLeafHit(BO_LeafBlock leaf)
         {
-            if (leaf == null || !leafBerries.ContainsKey(leaf)) return;
+            if (leaf == null) return;
 
-            // 1. Collect the "Primary" hit berry
-            // (This one is guaranteed because the ball touched the leaf)
-            collected++;
+            // 1. CHECK FIRST: Is this leaf actually tracked?
+            if (!leafBerries.ContainsKey(leaf))
+            {
+                Debug.LogWarning($"Leaf {leaf.name} not in dictionary. Destroying.");
+                leaf.ForceDestroy();
+                return;
+            }
+
+            // 2. NOW it is safe to access leafBerries[leaf]
+            CollectBerry();
             leafBerries[leaf]--;
 
-            // Update the visual immediately so the player sees the berry disappear
-            leaf.SetBerryCount(leafBerries[leaf]);
-
-            // 2. THE NEW GATE: Only allow bonus drops/moves if there are berries LEFT
+            // 3. Handle Bonus Logic
             if (leafBerries[leaf] > 0)
             {
                 float roll = Random.value;
-
-                // Roll for a Bonus Drop (30% chance)
                 if (roll < dropChance)
                 {
                     SpawnFallingBerry(leaf.transform.position);
-                    leafBerries[leaf]--; // Subtract the bonus berry from the leaf
+                    leafBerries[leaf]--;
                 }
-                // Roll for a Move (50% chance)
-                // Using "else if" means a berry can either drop OR move, not both at once
                 else if (roll < dropChance + moveChance)
                 {
+                    // Pass the leaf to redistribute
                     RedistributeFromLeaf(leaf);
                 }
-
-                // Final visual update after potential bonus actions
-                leaf.SetBerryCount(leafBerries[leaf]);
             }
 
-            // 3. Cleanup: If the leaf is now 0, remove it from the tracking lists
-            if (leafBerries[leaf] <= 0)
+            // 4. Update or Cleanup
+            // We check the dictionary again because Redistribute might have changed the count
+            if (leafBerries.ContainsKey(leaf))
             {
-                allLeaves.Remove(leaf);
-                leafBerries.Remove(leaf);
+                if (leafBerries[leaf] <= 0)
+                {
+                    allLeaves.Remove(leaf);
+                    leafBerries.Remove(leaf);
+                    leaf.SetBerryCount(0); // This triggers the final break
+                }
+                else
+                {
+                    leaf.SetBerryCount(leafBerries[leaf]);
+                }
             }
-
-            UpdateUI();
-            CheckWinCondition();
         }
 
         void RedistributeFromLeaf(BO_LeafBlock source)
         {
-            if (source == null) return;
+            // Safety check for the redistribute method specifically
+            if (source == null || !leafBerries.ContainsKey(source)) return;
 
             int toProcess = leafBerries[source];
             Vector3 startPos = source.transform.position;
@@ -148,14 +153,18 @@ namespace BreakOut
 
         public void CollectBerry()
         {
+            // If we've already won, stop counting
+            if (collected == -999) return;
+
             collected++;
             UpdateUI();
 
             if (collected >= requiredToClear)
             {
+                collected = -999; // Lock this method
+                Debug.Log("Blueberry Goal Reached!");
                 BO_Manager.instance.OnStageCleared();
             }
-            CheckWinCondition();
         }
 
         void SpawnFallingBerry(Vector3 position)
@@ -222,14 +231,17 @@ namespace BreakOut
             }
         }
 
-        public void CheckWinCondition()
+
+        public void ClearRemainingLeaves()
         {
-            if (collected >= requiredToClear)
+            // Find all objects with the BO_LeafBlock script and destroy them
+            BO_LeafBlock[] remaining = FindObjectsOfType<BO_LeafBlock>();
+            foreach (var leaf in remaining)
             {
-                Debug.Log("Blueberry Goal Reached!");
-                // Force the stage manager to transition
-                BO_Manager.instance.OnStageCleared();
+                Destroy(leaf.gameObject);
             }
+            allLeaves.Clear();
+            leafBerries.Clear();
         }
     }
 }

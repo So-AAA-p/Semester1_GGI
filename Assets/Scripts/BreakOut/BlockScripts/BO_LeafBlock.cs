@@ -29,8 +29,15 @@ namespace BreakOut
         public void SetBerryCount(int count)
         {
             berryCount = count;
+            currentHits = hitsRequired; // RESET hit counter so it needs a fresh hit for the next berry
             UpdateVisuals();
         }
+
+        public void ForceDestroy()
+        {
+            base.OnBreak();
+        }
+
 
         private void UpdateVisuals()
         {
@@ -84,18 +91,14 @@ namespace BreakOut
 
         protected override void OnBreak()
         {
-            // If we still have berries, we DON'T call base.OnBreak()
-            if (berryCount > 0)
+            // If we have berries, we process the berry hit but DON'T destroy the block yet
+            if (BO_BlueberryManager.Instance != null && berryCount > 0)
             {
-                // Give one berry to the manager
                 BO_BlueberryManager.Instance.OnLeafHit(this);
-
-                // IMPORTANT: We do NOT call base.OnBreak() here.
-                // This keeps the block alive!
             }
             else
             {
-                // If 0 berries, we finally let the block die
+                // 0 berries left? Call the parent BO_Block.OnBreak() to destroy the object
                 base.OnBreak();
             }
         }
