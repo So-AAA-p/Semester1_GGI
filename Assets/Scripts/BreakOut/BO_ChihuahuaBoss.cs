@@ -4,28 +4,48 @@ namespace BreakOut
 {
     public class BO_ChihuahuaBoss : MonoBehaviour
     {
-    public enum Phase { Puppy, Teen, Alpha }
-    public Phase currentPhase = Phase.Puppy;
+        public enum Phase { PhaseOne, PhaseTwo, PhaseThree }
+        public Phase currentPhase = Phase.PhaseOne;
 
-    public float maxHealth = 100f;
-    private float currentHealth;
+        public float maxHealth = 100f;
+        private float currentHealth;
 
-    public void TakeDamage(float amount)
-    {
-        currentHealth -= amount;
-        UpdatePhase();
-    }
 
-    void UpdatePhase()
-    {
-        float healthPercent = currentHealth / maxHealth;
+        private void Start()
+        {
+            // Initialize health at the start
+            currentHealth = maxHealth;
+            Debug.Log($"[Boss] Chihuahua spawned with {currentHealth} HP!");
+        }
 
-        if (healthPercent < 0.33f) currentPhase = Phase.Alpha;
-        else if (healthPercent < 0.66f) currentPhase = Phase.Teen;
-        else currentPhase = Phase.Puppy;
+        public void TakeDamage(float amount)
+        {
+            currentHealth -= amount;
 
-        // Trigger visual changes or accuracy increases here
-    }
+            // Step 1: Console Update
+            Debug.Log($"[Boss] Ouch! Took {amount} damage. HP: {currentHealth}/{maxHealth}");
+
+            UpdatePhase();
+
+            if (currentHealth <= 0)
+            {
+                Debug.Log("[Boss] The Chihuahua has been tuckered out! (Defeated)");
+                // Handle death logic later
+            }
+        }
+
+        void UpdatePhase()
+        {
+            float healthPercent = currentHealth / maxHealth;
+
+            // Simple logic: Change phase based on HP thresholds
+            if (healthPercent < 0.33f) currentPhase = Phase.PhaseThree;
+            else if (healthPercent < 0.66f) currentPhase = Phase.PhaseTwo;
+            else currentPhase = Phase.PhaseOne;
+
+            // Log phase changes
+            Debug.Log($"[Boss] Current Phase: {currentPhase}");
+        }
     }
 }
 

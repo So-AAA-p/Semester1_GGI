@@ -51,7 +51,28 @@ namespace BreakOut
 
         public void InitializeBlueberries()
         {
+            // --- NEW FIX START ---
+            // If the list is empty, manually find all leaves in the scene
+            if (allLeaves.Count == 0)
+            {
+                BO_LeafBlock[] foundLeaves = FindObjectsOfType<BO_LeafBlock>(true); // 'true' finds inactive ones too
+                foreach (var leaf in foundLeaves)
+                {
+                    RegisterLeaf(leaf);
+                }
+                Debug.Log($"[BlueberryManager] Manually found and registered {allLeaves.Count} leaves.");
+            }
+            // --- NEW FIX END ---
+
             int capacity = allLeaves.Count * maxPerLeaf;
+
+            // Safety check: if there are STILL no leaves, stop here
+            if (capacity <= 0)
+            {
+                Debug.LogError("No leaves found to spawn berries on!");
+                return;
+            }
+
             int toSpawn = Mathf.Min(totalBlueberries, capacity);
             int remaining = toSpawn;
 
@@ -65,7 +86,7 @@ namespace BreakOut
                 }
             }
 
-            collected = 0; // Reset count for the new stage
+            collected = 0;
             UpdateUI();
             UpdateLeafVisuals();
         }

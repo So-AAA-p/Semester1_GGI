@@ -146,6 +146,17 @@ namespace BreakOut
                 }
             }
 
+            // --- BOSS HIT LOGIC START ---
+            // Check if the object we hit has the BossManager script
+            BO_ChihuahuaBoss boss = collision.gameObject.GetComponent<BO_ChihuahuaBoss>();
+
+            if (boss != null)
+            {
+                // We hit the boss!
+                boss.TakeDamage(3);
+            }
+            // --- BOSS HIT LOGIC END ---
+
             rb.linearVelocity = dir * currentSpeed;
         }
 

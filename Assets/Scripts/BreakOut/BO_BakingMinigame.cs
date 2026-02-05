@@ -212,7 +212,6 @@ namespace BreakOut
             // Tell the stage controller to move on
             BO_StageController.Instance.StartStage(BO_StageController.StageType.Stage3);
         }
-
         void UpdateTimerUI()
         {
             if (timerText != null)

@@ -53,13 +53,20 @@ namespace BreakOut
             Instance = this;
         }
 
-        void Start()
+        public void ClearGrid()
         {
-            GenerateGrid();
+            foreach (var block in blockGrid.Values)
+            {
+                if (block != null) Destroy(block.gameObject);
+            }
+            blockGrid.Clear();
         }
 
-        void GenerateGrid()
+        public void GenerateGrid(GridMode mode)
         {
+            ClearGrid(); // Safety wipe
+            gridMode = mode;
+
             Vector2 startPosition = CalculateStartPosition();
 
             for (int row = 0; row < rows; row++)
@@ -71,39 +78,21 @@ namespace BreakOut
                         startPosition.y - row * (brickHeight + spacing)
                     );
 
-                    GameObject prefab;
-
-                    if (gridMode == GridMode.LeafBlocks)
-                    {
-                        prefab = leafBlock;
-                    }
-                    else
-                    {
-                        prefab = PickBrick(row);
-                    }
-
+                    GameObject prefab = (gridMode == GridMode.LeafBlocks) ? leafBlock : PickBrick(row);
                     GameObject instance = Instantiate(prefab, spawnPos, Quaternion.identity, transform);
 
                     BO_Block block = instance.GetComponent<BO_Block>();
-                    if (block == null)
+                    if (block != null)
                     {
-                        Debug.LogError($"Prefab {prefab.name} missing BO_Block!");
-                        Destroy(instance);
-                        continue;
+                        Vector2Int gridPos = new Vector2Int(col, row);
+                        block.SetGridPosition(gridPos);
+                        blockGrid.Add(gridPos, block);
                     }
-
-                    Vector2Int gridPos = new Vector2Int(col, row);
-                    block.SetGridPosition(gridPos);
-                    blockGrid.Add(gridPos, block);
                 }
             }
 
-            if (BO_StageController.Instance != null &&
-                BO_StageController.Instance.currentStage == BO_StageController.StageType.Stage2)
-            {
-                BO_StageController.Instance.StartStage(BO_StageController.StageType.Stage2);
-            }
-
+            // IMPORTANT: Remove that "if (Stage2) StartStage" loop you had at the bottom 
+            // of the old GenerateGrid. It causes infinite loops!
         }
 
         public BO_Block GetBlockAt(Vector2Int pos)
@@ -178,19 +167,22 @@ namespace BreakOut
         {
             blockGrid.Remove(pos);
         }
+
         public void OnBlockDestroyed(Vector2Int pos)
         {
             if (blockGrid.Remove(pos))
             {
-                Debug.Log($"[Blocks] Remaining: {blockGrid.Count}");
+                Debug.Log($"[Blocks] Block removed at {pos}. Remaining: {blockGrid.Count}");
 
                 if (blockGrid.Count == 0)
                 {
-                    Debug.Log("[Stage] All blocks cleared!");
+                    Debug.Log("[Stage] All blocks cleared! Triggering Win...");
+                    // Force the manager to handle the win
                     BO_Manager.instance.OnStageCleared();
                 }
             }
         }
+
         public IEnumerable<BO_Block> GetAllBlocks()
         {
             return blockGrid.Values;
