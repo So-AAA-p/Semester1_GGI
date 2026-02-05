@@ -32,7 +32,10 @@ namespace BreakOut
         public TextMeshProUGUI timerText;
         public GameObject startPromptText;
 
-        // Colors 
+        [Header("Result UI")]
+        public TextMeshProUGUI resultAnnouncementText;
+
+        [Header("Color stuff")]
         public Color coldColor = Color.cyan;
         public Color perfectColor = Color.green;
         public Color hotColor = Color.red;
@@ -121,39 +124,99 @@ namespace BreakOut
 
         void CheckSweetSpot()
         {
-            bool inZone = (currentHeat >= sweetSpotMin && currentHeat <= sweetSpotMax);
+            // Define our ranges based on your design
+            float scoreDecreaseRate = 10f; // How fast it cools/undercooks
+            float scoreIncreaseRate = 20f; // How fast it bakes in the sweet spot
+            float burnRate = 15f;          // How fast it burns when too hot
 
-            if (inZone)
+            if (currentHeat < sweetSpotMin)
             {
-                currentQuality += qualityGainRate * Time.deltaTime;
+                // ZONE: TOO COLD (Score drops)
+                currentQuality -= scoreDecreaseRate * Time.deltaTime;
+                if (sliderFillImage != null) sliderFillImage.color = coldColor;
+            }
+            else if (currentHeat >= sweetSpotMin && currentHeat <= sweetSpotMax)
+            {
+                // ZONE: SWEET SPOT (Bake up to 60)
+                if (currentQuality < 70f)
+                {
+                    currentQuality += scoreIncreaseRate * Time.deltaTime;
+                }
+                else if (currentQuality > 80f)
+                {
+                    // If they were burning and came back to green, let it "cool" back to 60
+                    currentQuality -= scoreDecreaseRate * Time.deltaTime;
+                    currentQuality = Mathf.Max(currentQuality, 80f);
+                }
+
+                if (sliderFillImage != null) sliderFillImage.color = perfectColor;
+            }
+            else
+            {
+                // ZONE: TOO HOT (Burn above 60)
+                currentQuality += burnRate * Time.deltaTime;
+                if (sliderFillImage != null) sliderFillImage.color = hotColor;
             }
 
-            currentQuality = Mathf.Min(currentQuality, 100f);
-
-            // SAFE VISUAL UPDATE
-            // We check specifically if the object has been destroyed to prevent the error
-            if (sliderFillImage != null && !sliderFillImage.Equals(null))
-            {
-                if (inZone)
-                    sliderFillImage.color = perfectColor;
-                else
-                    sliderFillImage.color = (currentHeat > sweetSpotMax) ? hotColor : coldColor;
-            }
-        }
-
-        void UpdateTimerUI()
-        {
-            if (timerText != null)
-                timerText.text = Mathf.CeilToInt(timeLeft).ToString();
+            // Clamp the final score between 0 and 100
+            currentQuality = Mathf.Clamp(currentQuality, 0f, 100f);
         }
 
         void EndMinigame()
         {
             isReady = false;
             hasStarted = false;
-            Debug.Log($"FINSIHED! Final Quality: {currentQuality}/100");
 
-            // Trigger transition to Stage 3 or Boss here later
+            string resultHeader = "";
+            Color displayColor = Color.white;
+
+            // Using your new 70-80 logic!
+            if (currentQuality < 70f)
+            {
+                resultHeader = "UNDERCOOKED D:";
+                displayColor = coldColor;
+            }
+            else if (currentQuality >= 70f && currentQuality <= 80f)
+            {
+                resultHeader = "PERFECT SCORE!";
+                displayColor = perfectColor;
+
+                // Award the bonus
+                if (BO_Manager.instance != null)
+                {
+                    BO_Manager.instance.lives++;
+                    BO_Manager.instance.UpdateDeathCount();
+                }
+            }
+            else // 81-100
+            {
+                resultHeader = "BURNT >:(";
+                displayColor = hotColor;
+            }
+
+            // Display it on screen!
+            if (resultAnnouncementText != null)
+            {
+                resultAnnouncementText.text = resultHeader;
+                resultAnnouncementText.color = displayColor;
+                resultAnnouncementText.gameObject.SetActive(true);
+            }
+
+            Debug.Log($"FINAL RESULT: {resultHeader} | Score: {currentQuality:F1}");
+
+            Invoke("ProceedToBoss", 3f);
+        }
+
+        void ProceedToBoss()
+        {
+            // Tell the stage controller to move on
+            BO_StageController.Instance.StartStage(BO_StageController.StageType.Stage3);
+        }
+
+        void UpdateTimerUI()
+        {
+            if (timerText != null)
+                timerText.text = Mathf.CeilToInt(timeLeft).ToString();
         }
     }
 }
