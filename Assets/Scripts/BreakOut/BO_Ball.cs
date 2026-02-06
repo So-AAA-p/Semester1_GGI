@@ -8,10 +8,11 @@ namespace BreakOut
 
         private Rigidbody2D rb;
 
+
         [Header("Movement Settings")]
-        public float speedIncreasePerSecond = 2f;
-        public float maxSpeed = 20f;
-        private float currentSpeed = 5f;
+        //public float speedIncreasePerSecond = 2f;
+        //public float maxSpeed = 20f;
+        public float constantSpeed = 10f;
         public float minYComponent = 0.3f;
 
         // New variables for the "Sticky" behavior
@@ -79,7 +80,7 @@ namespace BreakOut
             else
             {
                 // NORMAL MODE: Handle speed increase
-                IncreaseSpeedOverTime();
+                //IncreaseSpeedOverTime();
             }
         }
 
@@ -93,7 +94,7 @@ namespace BreakOut
             angle *= Random.value < 0.5f ? -1 : 1;
 
             Vector2 direction = new Vector2(side, angle).normalized;
-            rb.linearVelocity = direction * currentSpeed;
+            rb.linearVelocity = direction * constantSpeed;
         }
 
         public void SetVelocity(Vector2 velocity)
@@ -107,12 +108,19 @@ namespace BreakOut
 
         void FixedUpdate()
         {
+            // If the ball is moving, force it to ALWAYS stay at 'constantSpeed'
+            if (rb != null && rb.linearVelocity != Vector2.zero)
+            {
+                rb.linearVelocity = rb.linearVelocity.normalized * constantSpeed;
+            }
+
             if (!isAttached) // Only track physics velocity if we are actually flying
             {
                 lastVelocity = rb.linearVelocity;
             }
         }
 
+            /*
         void IncreaseSpeedOverTime()
         {
             currentSpeed += speedIncreasePerSecond * ((3 * Time.deltaTime) / 2);
@@ -122,6 +130,29 @@ namespace BreakOut
             if (!isAttached && rb.linearVelocity.magnitude > 0)
             {
                 rb.linearVelocity = rb.linearVelocity.normalized * currentSpeed;
+            }
+        }
+            */
+
+        public void ApplyBakingModifiers() // selber Name wie in BO_Paddle -> Encapsulation (Methoden haben den selben Namen, aber leben in verschiedene Klassen)
+        {
+            // Default scale (usually 1, 1, 1 or whatever your prefab is)
+            Vector3 normalScale = Vector3.one;
+
+            if (BO_Manager.instance.lastBakingResult == BO_Manager.BakingResult.Burnt)
+            {
+                // Shriveled ball!
+                transform.localScale = normalScale * 0.7f;
+
+                // Optional: Make it look charcoal grey
+                GetComponent<SpriteRenderer>().color = new Color(0.2f, 0.2f, 0.2f);
+
+                Debug.Log("[Ball] Ball shriveled: It's a charcoal briquette now!");
+            }
+            else
+            {
+                transform.localScale = normalScale;
+                GetComponent<SpriteRenderer>().color = Color.white;
             }
         }
 
@@ -148,7 +179,7 @@ namespace BreakOut
 
             // --- BOSS HIT LOGIC START ---
             // Check if the object we hit has the BossManager script
-            BO_ChihuahuaBoss boss = collision.gameObject.GetComponent<BO_ChihuahuaBoss>();
+            BO_BossHead boss = collision.gameObject.GetComponent<BO_BossHead>();
 
             if (boss != null)
             {
@@ -157,7 +188,7 @@ namespace BreakOut
             }
             // --- BOSS HIT LOGIC END ---
 
-            rb.linearVelocity = dir * currentSpeed;
+            rb.linearVelocity = dir * constantSpeed;
         }
 
         public Vector2 GetVelocity()

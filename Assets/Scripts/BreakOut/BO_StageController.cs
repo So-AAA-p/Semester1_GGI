@@ -61,17 +61,19 @@ namespace BreakOut
 
         private void Update()
         {
-            // UNIVERSAL INPUT: If a screen is up, Enter dismisses it
             if (currentActiveScreen != null && Input.GetKeyDown(KeyCode.Return))
             {
-                // 1. Fade out the screen
-                StartCoroutine(FadeOutRoutine(currentActiveScreen, 2.0f));
+                // 1. Capture the screen we are about to dismiss
+                CanvasGroup screenToDismiss = currentActiveScreen;
 
-                // 2. Decide what happens next based on which screen just closed
-                OnScreenDismissed(currentActiveScreen);
-
-                // 3. Clear variable so we don't trigger twice
+                // 2. Clear the variable FIRST so no other logic can mess with it this frame
                 currentActiveScreen = null;
+
+                Debug.Log($"[Input] Dismissing: {screenToDismiss.name}");
+
+                // 3. Run the exit logic
+                StartCoroutine(FadeOutRoutine(screenToDismiss, 2.0f));
+                OnScreenDismissed(screenToDismiss);
             }
         }
 
@@ -128,73 +130,43 @@ namespace BreakOut
 
         private void OnScreenDismissed(CanvasGroup screen)
         {
-            // LOGIC: "The player just pressed Enter on [screen]. What happens next?"
+            if (screen == Stage1Intro) { BO_Manager.instance.SpawnBall(); }
+            else if (screen == Stage1Win) { StartCoroutine(TransitionElevator(StageType.Stage2)); }
+            else if (screen == Stage2Intro) { BO_Manager.instance.SpawnBall(); }
+            else if (screen == Stage2Win) { OnStage2Complete(); }
+            else if (screen == Stage3Intro) { BO_Manager.instance.SpawnBall(); }
 
-            // --- STAGE 1 LOGIC ---
-            if (screen == Stage1Intro)
-            {
-                // Intro is gone -> Spawn the ball to play Stage 1
-                BO_Manager.instance.SpawnBall();
-            }
-            else if (screen == Stage1Win)
-            {
-                // Win screen is gone -> Start elevator to Stage 2
-                StartCoroutine(TransitionElevator(StageType.Stage2));
-            }
-
-            // --- STAGE 2 LOGIC ---
-            else if (screen == Stage2Intro)
-            {
-                // Intro is gone -> Spawn ball for Stage 2
-                BO_Manager.instance.SpawnBall();
-            }
-            else if (screen == Stage2Win)
-            {
-                // Win screen is gone -> Start baking transition!
-                OnStage2Complete();
-            }
-
+            // CONSOLIDATED MINIGAME RESET:
             else if (screen == BakingResultScreen)
             {
-                // The player saw their score, pressed Enter, now we leave the kitchen!
-                StartCoroutine(TransitionToStage3Sequence());
-            }
-
-            // --- STAGE 3 LOGIC (Placeholder for now) ---
-            else if (screen == Stage3Intro)
-            {
-                BO_Manager.instance.SpawnBall();
-            }
-
-            else if (screen == BakingResultScreen)
-            {
-                // 1. Start fading out the entire minigame container
+                Debug.Log("Result Screen Dismissed! Starting Fade Out...");
                 StartCoroutine(FadeOutMiniGameAndStartStage3());
             }
         }
 
         private IEnumerator FadeOutMiniGameAndStartStage3()
         {
-            // 1. Fade out the whole container (using your existing 2.0f speed or faster)
+            Debug.Log("Starting Master Fade for Minigame...");
+
+            // 1. Fade the whole group
             yield return StartCoroutine(FadeOutRoutine(MiniGameScreensGroup, 1.5f));
 
-            // 2. Small buffer to let the screen stay clear for a beat
+            // 2. FORCE SHUTDOWN: Make sure the object is actually inactive
+            MiniGameScreensGroup.gameObject.SetActive(false);
+
             yield return new WaitForSeconds(0.5f);
 
-            // 3. Launch Stage 3
+            // 1. Tell the paddle to check the baking result
+            FindObjectOfType<BO_Paddle>().ApplyBakingModifiers();
+
+            // 2. Start the stage
             StartStage(StageType.Stage3);
-        }
 
-        private IEnumerator TransitionToStage3Sequence()
-        {
-            // 1. Trigger the "SlideUp" to move the kitchen/panel away
-            if (backgroundAnimator != null) backgroundAnimator.SetTrigger("SlideUp");
-
-            // 2. Wait for the animation to finish (adjust time to match your clip length)
-            yield return new WaitForSeconds(1.5f);
-
-            // 3. Finally, start Stage 3
-            StartStage(StageType.Stage3);
+            // 3. Since StartStage usually spawns the ball, 
+            // we find the ball AFTER it's spawned to shrink it
+            yield return new WaitForEndOfFrame(); // Wait for spawn to finish
+            BO_Ball activeBall = FindObjectOfType<BO_Ball>();
+            if (activeBall != null) activeBall.ApplyBakingModifiers();
         }
 
         private IEnumerator FadeOutRoutine(CanvasGroup targetScreen, float speed)

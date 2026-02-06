@@ -175,11 +175,13 @@ namespace BreakOut
             {
                 resultHeader = "UNDERCOOKED D:";
                 displayColor = coldColor;
+                BO_Manager.instance.SetBakingResult(BO_Manager.BakingResult.Undercooked);
             }
             else if (currentQuality >= 70f && currentQuality <= 80f)
             {
                 resultHeader = "PERFECT SCORE!";
                 displayColor = perfectColor;
+                BO_Manager.instance.SetBakingResult(BO_Manager.BakingResult.Perfect);
 
                 // Award the bonus
                 if (BO_Manager.instance != null)
@@ -192,6 +194,7 @@ namespace BreakOut
             {
                 resultHeader = "BURNT >:(";
                 displayColor = hotColor;
+                BO_Manager.instance.SetBakingResult(BO_Manager.BakingResult.Burnt);
             }
 
             // Display it on screen!
@@ -205,13 +208,9 @@ namespace BreakOut
             Debug.Log($"FINAL RESULT: {resultHeader} | Score: {currentQuality:F1}");
 
             Invoke("ProceedToBoss", 3f);
+            BO_StageController.Instance.ShowScreen(BO_StageController.Instance.BakingResultScreen);
         }
 
-        void ProceedToBoss()
-        {
-            // Tell the stage controller to move on
-            BO_StageController.Instance.StartStage(BO_StageController.StageType.Stage3);
-        }
         void UpdateTimerUI()
         {
             if (timerText != null)

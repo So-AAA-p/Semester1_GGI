@@ -8,6 +8,10 @@ TagManager:
   - PPaddle
   - BreakOutBall
   - BO_Blueberry
+  - BO_BossHead
+  - BO_BossPaw
+  - BO_Projectile
+  - BO_Shield
   layers:
   - Default
   - TransparentFX
@@ -20,7 +24,7 @@ TagManager:
   - BreakOutWalls
   - PongGoals
   - Teleporter
-  - BreakOutBricks
+  - BreakOutBlock
   - 
   - 
   - 

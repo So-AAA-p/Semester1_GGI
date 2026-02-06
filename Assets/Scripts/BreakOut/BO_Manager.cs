@@ -16,11 +16,18 @@ namespace BreakOut
             Transition,
             GameOver
         }
-
-        public static BO_Manager instance;
-
         // This holds the current state of the game logic
         private GameState currentState = GameState.Start;
+
+        public enum BakingResult 
+        { 
+            Undercooked, 
+            Perfect, 
+            Burnt 
+        }
+        public BakingResult lastBakingResult;
+
+        public static BO_Manager instance;
 
         [Header("References")]
         public GameObject BallPrefab;
@@ -29,7 +36,6 @@ namespace BreakOut
         public TextMeshProUGUI losertext; // Added this back in case you use it
 
         [Header("Game Settings")]
-        public float ballstartvelocity = 20;
         public int lives = 5;
 
         [Header("Ball Control")]
@@ -72,6 +78,11 @@ namespace BreakOut
         public void SetState(GameState s)
         {
             currentState = s;
+        }
+        public void SetBakingResult(BakingResult result)
+        {
+            lastBakingResult = result;
+            Debug.Log($"[Manager] Baking result stored: {lastBakingResult}");
         }
 
         // --- BALL SPAWNING & DEATH LOGIC ---
@@ -164,7 +175,8 @@ namespace BreakOut
         {
             deaths = 0; // Or set to your starting value
             UpdateDeathCount(); // Updates your UI text
-            Debug.Log("[Manager] Lives have been reset for the new stage.");
+            controlsReversed = false;
+            Debug.Log("[Manager] Lives and Paddle Effects have been reset for the new stage.");
         }
 
         public void UpdateDeathCount()
