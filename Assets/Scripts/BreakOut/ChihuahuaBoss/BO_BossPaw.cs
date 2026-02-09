@@ -62,6 +62,10 @@ namespace BreakOut
         {
             isRetracted = true;
 
+            BO_Paddle.Instance.RestorePaddle();
+            // Use the Head instance to find the Attack script to stun him
+            BO_BossHead.Instance.GetComponent<BO_BossAttack>().StunBoss(3f);
+
             // Visual Flash
             if (spriteRenderer != null) spriteRenderer.color = flashColor;
 

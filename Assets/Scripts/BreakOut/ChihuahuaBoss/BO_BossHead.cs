@@ -9,7 +9,12 @@ namespace BreakOut
         // --- NEW: Singleton to allow Paws to find the Head easily ---
         public static BO_BossHead Instance;
 
-        public enum Phase { PhaseOne, PhaseTwo, PhaseThree }
+        public enum Phase 
+        { 
+            PhaseOne, 
+            PhaseTwo, 
+            PhaseThree 
+        }
         public Phase currentPhase = Phase.PhaseOne;
 
         [Header("Stats")]
@@ -91,6 +96,15 @@ namespace BreakOut
             flashRoutine = null;
         }
 
+        public void Heal(float amount)
+        {
+            currentHealth += amount;
+            currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+            //Debug.Log($"[Boss] Mmm, tasty paddle! Healed to {currentHealth} HP.");
+
+            // Optional: Add a green flash later to show healing
+        }
+
         void Die()
         {
             Debug.Log("[Boss] The Chihuahua has been tuckered out! (Defeated)");
@@ -105,13 +119,51 @@ namespace BreakOut
             }
         }
 
+        // Inside BO_BossHead.cs
+
         void UpdatePhase()
         {
             float healthPercent = currentHealth / maxHealth;
-            if (healthPercent < 0.33f) currentPhase = Phase.PhaseThree;
+            Phase previousPhase = currentPhase;
+
+            if (healthPercent < 0.5f) currentPhase = Phase.PhaseThree;
             else if (healthPercent < 0.66f) currentPhase = Phase.PhaseTwo;
             else currentPhase = Phase.PhaseOne;
-            Debug.Log($"[Boss] Current Phase: {currentPhase}");
+
+            // --- PHASE 2 TRIGGER (SHIELD) ---
+            if (previousPhase == Phase.PhaseOne && currentPhase == Phase.PhaseTwo)
+            {
+                Debug.Log("[Boss] Entering Phase 2 - Triggering Slow-Mo Tutorial");
+                if (BO_StageController.Instance != null)
+                {
+                    BO_StageController.Instance.TriggerPhase2Tutorial();
+                }
+            }
+
+            // --- PHASE 3 TRIGGER (LEAVES) ---
+            if (previousPhase != Phase.PhaseThree && currentPhase == Phase.PhaseThree)
+            {
+                if (BO_LeafManager.Instance != null)
+                {
+                    BO_LeafManager.Instance.StartPhase3();
+                }
+                // (We will add the Jam Tutorial trigger here later!)
+            }
+
+            if (previousPhase != Phase.PhaseThree && currentPhase == Phase.PhaseThree)
+            {
+                if (BO_LeafManager.Instance != null)
+                {
+                    BO_LeafManager.Instance.StartPhase3();
+                }
+
+                // --- TRIGGER JAM TUTORIAL ---
+                Debug.Log("[Boss] Entering Phase 3 - Triggering Jam Tutorial");
+                if (BO_StageController.Instance != null)
+                {
+                    BO_StageController.Instance.TriggerPhase3Tutorial();
+                }
+            }
         }
     }
 }

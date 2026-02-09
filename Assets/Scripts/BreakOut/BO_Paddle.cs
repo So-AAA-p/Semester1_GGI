@@ -10,7 +10,7 @@ namespace BreakOut
         public enum Direction { Right, Left }
 
         private SpriteRenderer spriteRenderer;
-        private float defaultSpeed; // To remember our original speed
+        private float defaultSpeed;
 
         [Header("Paddle Colors")]
         public Color normalColor = Color.white;
@@ -21,18 +21,33 @@ namespace BreakOut
         void Start()
         {
             spriteRenderer = GetComponent<SpriteRenderer>();
-
-            // SAVE the original speed from your controls object at the start
             defaultSpeed = controls.paddleSpeed;
-
             UpdatePaddleColor();
         }
 
-        void UpdatePaddleColor()
+        // --- NEW SIZE LOGIC ---
+
+        public void ShrinkPaddle()
         {
-            if (spriteRenderer == null) return;
-            spriteRenderer.color = BO_Manager.instance.controlsReversed ? reversedColor : normalColor;
+            Vector3 currentScale = transform.localScale;
+            // Subtract the step, but don't go below minScale
+            currentScale.x = Mathf.Max(controls.minScale, currentScale.x - controls.shrinkStep);
+            transform.localScale = currentScale;
+
+            //Debug.Log($"[Paddle] Shrunk! Current Width: {currentScale.x}");
         }
+
+        public void RestorePaddle()
+        {
+            Vector3 currentScale = transform.localScale;
+            // Add the step, but don't go above maxScale
+            currentScale.x = Mathf.Min(controls.maxScale, currentScale.x + controls.restoreStep);
+            transform.localScale = currentScale;
+
+            //Debug.Log($"[Paddle] Restored! Current Width: {currentScale.x}");
+        }
+
+        // --- EXISTING MOVEMENT ---
 
         void Update()
         {
@@ -48,7 +63,6 @@ namespace BreakOut
 
         void Move(Direction direction)
         {
-            // We use controls.paddleSpeed here, so that's the one we must modify!
             float moveDistance = controls.paddleSpeed * (3 * Time.deltaTime);
             moveDistance *= direction == Direction.Right ? 1 : -1;
 
@@ -62,33 +76,41 @@ namespace BreakOut
                 transform.Translate(new Vector3(moveDistance, 0, 0));
         }
 
+        void UpdatePaddleColor()
+        {
+            if (spriteRenderer == null) return;
+            spriteRenderer.color = BO_Manager.instance.controlsReversed ? reversedColor : normalColor;
+        }
+
         public void ApplyBakingModifiers()
         {
             if (BO_Manager.instance == null) return;
 
-            // We modify controls.paddleSpeed directly so the Move() function sees it
             if (BO_Manager.instance.lastBakingResult == BO_Manager.BakingResult.Undercooked)
-            {
                 controls.paddleSpeed = defaultSpeed * 0.7f;
-                Debug.Log($"[Paddle] Penalty: Undercooked! Speed slowed to {controls.paddleSpeed}");
-            }
             else if (BO_Manager.instance.lastBakingResult == BO_Manager.BakingResult.Perfect)
-            {
-                controls.paddleSpeed = defaultSpeed * 1.2f; // A little reward for being a master baker
-                Debug.Log($"[Paddle] Bonus: Perfect! Speed boosted to {controls.paddleSpeed}");
-            }
+                controls.paddleSpeed = defaultSpeed * 1.2f;
             else
-            {
                 controls.paddleSpeed = defaultSpeed;
-                Debug.Log("[Paddle] Speed is normal.");
-            }
         }
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
             if (collision.CompareTag("BO_Blueberry"))
             {
-                BO_BlueberryManager.Instance.CollectBerry();
+                // 1. Only tell Stage 2 Manager if we aren't in Phase 3 yet!
+                // This prevents the Manager from thinking the "Recipe" is finished.
+                if (BO_LeafManager.Instance != null && !BO_LeafManager.Instance.isPhase3Active)
+                {
+                    BO_BlueberryManager.Instance.CollectBerry();
+                }
+
+                // 2. Always fill the Jam Meter
+                if (BO_JamController.Instance != null)
+                {
+                    BO_JamController.Instance.AddBerry();
+                }
+
                 Destroy(collision.gameObject);
             }
         }

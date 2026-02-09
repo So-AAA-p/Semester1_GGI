@@ -1,5 +1,6 @@
-using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace BreakOut
 {
@@ -87,20 +88,6 @@ namespace BreakOut
             }
 
             Destroy(flyer);
-        }
-
-        protected override void OnBreak()
-        {
-            // If we have berries, we process the berry hit but DON'T destroy the block yet
-            if (BO_BlueberryManager.Instance != null && berryCount > 0)
-            {
-                BO_BlueberryManager.Instance.OnLeafHit(this);
-            }
-            else
-            {
-                // 0 berries left? Call the parent BO_Block.OnBreak() to destroy the object
-                base.OnBreak();
-            }
         }
     }
 }

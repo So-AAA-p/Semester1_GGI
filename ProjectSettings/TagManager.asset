@@ -12,6 +12,8 @@ TagManager:
   - BO_BossPaw
   - BO_Projectile
   - BO_Shield
+  - BO_Paddle
+  - BO_MoldShot
   layers:
   - Default
   - TransparentFX

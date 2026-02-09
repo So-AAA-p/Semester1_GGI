@@ -6,17 +6,15 @@ namespace BreakOut
     public class BO_PowerUpController : MonoBehaviour
     {
         [Header("Berries (Shots) Settings")]
-        public GameObject projectilePrefab; // Drag the 'BerryProjectile' here!
-        public Transform firePoint;         // Optional: A specific point on the paddle to fire from
-
+        public GameObject projectilePrefab;
+        public Transform firePoint;
         public int maxAmmo = 5;
         public int currentAmmo;
         public float reloadTime = 15f;
-
         private bool isReloading = false;
 
         [Header("Shield Logic")]
-        public GameObject shieldVisual; // Drag the 'Shield' child object here
+        public GameObject shieldVisual;
         public int maxShieldHealth = 3;
         public float baseShieldRegen = 10f;
         private int currentShieldHealth;
@@ -26,47 +24,70 @@ namespace BreakOut
         {
             currentAmmo = maxAmmo;
             currentShieldHealth = maxShieldHealth;
+
+            // --- FIX: Initial Visual Check ---
+            // This ensures the shield is OFF at the start of the game
             UpdateShieldVisuals();
         }
 
         void Update()
         {
-            // PRESS 'E' TO SHOOT
-            if (Input.GetKeyDown(KeyCode.E))
+            // --- BERRY SHOTS UNLOCK CHECK ---
+            // (Wait for your "Phase 1 idea" to set this to true in Manager)
+            if (BO_Manager.instance.isJamUnlocked && Input.GetKeyDown(KeyCode.E))
             {
                 AttemptToShoot();
             }
 
-            HandleShieldRegen();
+            // --- SHIELD UNLOCK CHECK ---
+            if (BO_Manager.instance.isShieldUnlocked)
+            {
+                HandleShieldRegen();
+
+                // We also need to make sure the visual hasn't been 
+                // accidentally left off once it IS unlocked
+                if (currentShieldHealth > 0 && shieldVisual != null && !shieldVisual.activeSelf)
+                {
+                    shieldVisual.SetActive(true);
+                }
+            }
+            else
+            {
+                // FORCE OFF if not unlocked yet
+                if (shieldVisual != null && shieldVisual.activeSelf)
+                {
+                    shieldVisual.SetActive(false);
+                }
+            }
         }
+
         void HandleShieldRegen()
         {
-            // If shield is full, we don't need to do anything
             if (currentShieldHealth >= maxShieldHealth) return;
 
-            // MATH TIME: The regen speed depends on how much health is missing
-            // 3 health left: slow regen. 1 health left: fast regen.
             float regenMultiplier = (maxShieldHealth - currentShieldHealth) + 1;
             shieldRegenTimer += Time.deltaTime * regenMultiplier;
 
-            // If timer hits the base regen threshold (10s), we gain 1 health
             if (shieldRegenTimer >= baseShieldRegen)
             {
                 currentShieldHealth++;
                 shieldRegenTimer = 0f;
                 UpdateShieldVisuals();
-                Debug.Log($"Shield Regained! Current: {currentShieldHealth}");
             }
         }
 
         void UpdateShieldVisuals()
         {
-            // If shield health is 0, turn the visual off. Otherwise, turn it on.
-            if (shieldVisual != null)
-            {
-                shieldVisual.SetActive(currentShieldHealth > 0);
+            if (shieldVisual == null) return;
 
-                // Optional: Make it more transparent as it gets weaker
+            // --- THE CRITICAL FIX ---
+            // Only allow the shield to be active if it's UNLOCKED in the manager
+            bool shouldBeVisible = BO_Manager.instance.isShieldUnlocked && currentShieldHealth > 0;
+
+            shieldVisual.SetActive(shouldBeVisible);
+
+            if (shouldBeVisible)
+            {
                 SpriteRenderer sr = shieldVisual.GetComponent<SpriteRenderer>();
                 if (sr != null)
                 {
@@ -79,64 +100,35 @@ namespace BreakOut
 
         public void TakeShieldHit()
         {
-            if (currentShieldHealth <= 0) return;
+            // Can't take a hit if we don't have the shield yet!
+            if (!BO_Manager.instance.isShieldUnlocked || currentShieldHealth <= 0) return;
 
             currentShieldHealth--;
-            Debug.Log($"Shield hit! Health remaining: {currentShieldHealth}");
-
             UpdateShieldVisuals();
         }
 
         void AttemptToShoot()
         {
-            if (isReloading)
-            {
-                Debug.Log("Reloading! Cannot shoot yet.");
-                return;
-            }
-
-            if (currentAmmo > 0)
-            {
-                Shoot();
-            }
-            else
-            {
-                Debug.Log("Click! Out of ammo.");
-                // Ensure reload starts if it hasn't already (failsafe)
-                StartCoroutine(ReloadRoutine());
-            }
+            if (isReloading) return;
+            if (currentAmmo > 0) Shoot();
+            else StartCoroutine(ReloadRoutine());
         }
 
         void Shoot()
         {
             currentAmmo--;
-            Debug.Log($"Pew! Ammo left: {currentAmmo}");
-
-            // Spawn the bullet
-            // If we have a specific firePoint, use it. Otherwise, use paddle center + slight offset
             Vector3 spawnPos = (firePoint != null) ? firePoint.position : transform.position + new Vector3(0, 0.5f, 0);
-
             Instantiate(projectilePrefab, spawnPos, Quaternion.identity);
-
-            // Check if that was the last shot
-            if (currentAmmo <= 0)
-            {
-                StartCoroutine(ReloadRoutine());
-            }
+            if (currentAmmo <= 0) StartCoroutine(ReloadRoutine());
         }
 
         IEnumerator ReloadRoutine()
         {
-            if (isReloading) yield break; // Don't start twice
-
+            if (isReloading) yield break;
             isReloading = true;
-            Debug.Log($"Empty! Reloading for {reloadTime} seconds...");
-
             yield return new WaitForSeconds(reloadTime);
-
             currentAmmo = maxAmmo;
             isReloading = false;
-            Debug.Log("RELOAD COMPLETE! Ammo full.");
         }
     }
 }

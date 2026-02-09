@@ -58,7 +58,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 00f6d00e558cf3c49aac44b3060ba73a, type: 2}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -80,7 +80,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 0.6627451, g: 0.5176471, b: 0.40392157, a: 1}
+  m_Color: {r: 0.10399608, g: 0.38679248, b: 0.10534578, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -165,6 +165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46fee984afa7e904ab9848243b320e3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedIncreasePerSecond: 1
-  maxSpeed: 20
+  constantSpeed: 10
   minYComponent: 0.3
+  isJamCoated: 0
+  jamColor: {r: 0.5, g: 0, b: 0.5, a: 1}

@@ -26,6 +26,9 @@ namespace BreakOut
         public float wobblePhase3 = 0f;     // Perfect aim
         public float speedPhase3 = 12f;     // Fast speed
 
+        [Header("Stun Settings")]
+        public bool isStunned = false;
+        public GameObject stunIndicator;
 
         private float currentWaitTime;
 
@@ -61,11 +64,28 @@ namespace BreakOut
                 yield return new WaitForSeconds(currentWaitTime);
 
                 // 3. Shoot!
-                if (BO_BossHead.Instance != null)
+                if (BO_BossHead.Instance != null && !isStunned)
                 {
                     ShootAtPlayer();
                 }
             }
+        }
+
+        public void StunBoss(float duration)
+        {
+            StopCoroutine("StunRoutine"); // Reset stun if hit again
+            StartCoroutine(StunRoutine(duration));
+        }
+
+        private IEnumerator StunRoutine(float duration)
+        {
+            isStunned = true;
+            stunIndicator.SetActive(true);
+            //Debug.Log("[Boss] STUNNED! Cannot shoot.");
+            yield return new WaitForSeconds(duration);
+            isStunned = false;
+            stunIndicator.SetActive(false);
+            //Debug.Log("[Boss] Recovered from stun.");
         }
 
         void ShootAtPlayer()
@@ -114,9 +134,6 @@ namespace BreakOut
             {
                 moldScript.SetSpeed(currentSpeed);
             }
-
-            // Debug Log to track the chaos
-            Debug.Log($"[Boss] {debugPhase} | Rate: {currentWaitTime}s | Speed: {currentSpeed} | Wobble: {currentMaxWobble}");
         }
     }
 }

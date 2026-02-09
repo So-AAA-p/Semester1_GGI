@@ -37,11 +37,13 @@ namespace BreakOut
                 Destroy(gameObject);
             }
             // 2. HIT THE PADDLE (MISS THE SHIELD)
-            else if (other.CompareTag("Player"))
+            else if (other.CompareTag("BO_Paddle"))
             {
                 // Add your player damage logic here later!
                 Debug.Log("Ouch! The paddle was hit by mold!");
                 Destroy(gameObject);
+                BO_Paddle.Instance.ShrinkPaddle();
+                BO_BossHead.Instance.Heal(5f); // Heal boss 5 HP
             }
             // 3. HIT THE BOTTOM BOUNDARY (Optional)
             else if (other.gameObject.layer == LayerMask.NameToLayer("BreakOutWalls"))

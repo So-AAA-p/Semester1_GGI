@@ -29,6 +29,10 @@ namespace BreakOut
 
         public static BO_Manager instance;
 
+        [Header("Powerup Unlocks")]
+        public bool isShieldUnlocked = false;
+        public bool isJamUnlocked = false;
+
         [Header("References")]
         public GameObject BallPrefab;
         public GameObject gameOverObject; // The "You Lost" screen object
@@ -83,6 +87,18 @@ namespace BreakOut
         {
             lastBakingResult = result;
             Debug.Log($"[Manager] Baking result stored: {lastBakingResult}");
+        }
+
+        public void UnlockShield()
+        {
+            isShieldUnlocked = true;
+            Debug.Log("<color=cyan>[Manager] Shield Powerup Unlocked!</color>");
+        }
+
+        public void UnlockJam()
+        {
+            isJamUnlocked = true;
+            Debug.Log("<color=magenta>[Manager] Jam Mode Unlocked!</color>");
         }
 
         // --- BALL SPAWNING & DEATH LOGIC ---

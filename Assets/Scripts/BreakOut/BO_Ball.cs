@@ -15,6 +15,12 @@ namespace BreakOut
         public float constantSpeed = 10f;
         public float minYComponent = 0.3f;
 
+        [Header("Jam Mode")]
+        public bool isJamCoated = false;
+        public Color jamColor = new Color(0.5f, 0f, 0.5f); // Purple
+        private Color normalBallColor;
+        private SpriteRenderer sr;
+
         // New variables for the "Sticky" behavior
         private bool isAttached = true;
         private Transform paddleTransform;
@@ -26,10 +32,12 @@ namespace BreakOut
         {
             Instance = this;
             rb = GetComponent<Rigidbody2D>();
+            sr = GetComponent<SpriteRenderer>();
         }
 
         void Start()
         {
+            normalBallColor = sr.color;
             // 1. Check if the ball already has velocity (e.g. from Sugar Block split)
             // If it's already moving, don't stick it to the paddle!
             if (rb.linearVelocity.magnitude > 0.1f)
@@ -104,8 +112,23 @@ namespace BreakOut
             isAttached = false;
         }
 
-        // ... (Keep your FixedUpdate, OnCollisionEnter2D, and GetVelocity methods exactly the same) ...
+        public void EnableJamCoating()
+        {
+            isJamCoated = true;
+            if (sr != null) sr.color = jamColor;
+            Debug.Log("<color=magenta>BALL COATED IN JAM!</color>");
+        }
 
+        public void DisableJamCoating()
+        {
+            isJamCoated = false;
+            if (sr != null) sr.color = normalBallColor;
+
+            // Tell the controller we are done
+            if (BO_JamController.Instance != null)
+                BO_JamController.Instance.JamHitComplete();
+        }
+        
         void FixedUpdate()
         {
             // If the ball is moving, force it to ALWAYS stay at 'constantSpeed'
@@ -158,8 +181,24 @@ namespace BreakOut
 
         void OnCollisionEnter2D(Collision2D collision)
         {
-            // Paste your existing OnCollisionEnter2D logic here
-            // It doesn't need to change!
+            if (collision.gameObject.CompareTag("BO_BossHead") || collision.gameObject.CompareTag("BO_BossPaw"))
+            {
+                if (isJamCoated)
+                {
+                    // Deal 5 Damage!
+                    BO_BossHead.Instance.TakeDamage(5f);
+                    Debug.Log("CRITICAL JAM HIT! 5 Damage dealt.");
+
+                    // Remove coating
+                    DisableJamCoating();
+                }
+                else
+                {
+                    // Normal hit logic (whatever damage you usually do)
+                    BO_BossHead.Instance.TakeDamage(1f);
+                }
+            }
+
             int layer = collision.gameObject.layer;
 
             Vector2 incomingVelocity = lastVelocity;
@@ -189,6 +228,16 @@ namespace BreakOut
             // --- BOSS HIT LOGIC END ---
 
             rb.linearVelocity = dir * constantSpeed;
+        }
+
+        void OnTriggerEnter2D(Collider2D other)
+        {
+            if (isJamCoated && other.CompareTag("BO_MoldShot"))
+            {
+                // PIERCE! Destroy the shot, but don't stop the ball
+                Destroy(other.gameObject);
+                Debug.Log("Mold Shot Pierced by Jam Ball!");
+            }
         }
 
         public Vector2 GetVelocity()
