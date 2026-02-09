@@ -120,6 +120,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PB_Classic Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 6442021416879576706, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: m_AngularDamping
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7416478971553313021, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: m_Radius
       value: 0.16

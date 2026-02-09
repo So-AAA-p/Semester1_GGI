@@ -2,8 +2,8 @@ using UnityEngine;
 // using UnityEngine.SceneManagement;     
 using System.Collections;
 
-namespace Pong 
-{ 
+namespace Pong
+{
     public class PongBall : MonoBehaviour
     {
         private Rigidbody2D rb;
@@ -106,7 +106,7 @@ namespace Pong
         private float currentWobble;
         private Material runtimeMaterial;
 
-        
+
 
         void Awake()
         {
@@ -152,6 +152,7 @@ namespace Pong
 
             Vector2 dir = new Vector2(side, angle).normalized;
             rb.linearVelocity = dir * currentSpeed;
+            rb.angularVelocity = Random.Range(45f, 90f) * (Random.value < 0.5f ? 1 : -1); // für rotation
         }
 
         IEnumerator SwitchRoutine()
@@ -183,10 +184,10 @@ namespace Pong
         {
             BallType[] options =
             {
-        BallType.PaddleIncrease,
-        BallType.PaddleDecrease,
-        BallType.Unstable
-    };
+                BallType.PaddleIncrease,
+                BallType.PaddleDecrease,
+                BallType.Unstable
+            };
 
             BallType newType = options[Random.Range(0, options.Length)];
 
@@ -309,7 +310,7 @@ namespace Pong
 
         void IncreaseSpeedOverTime()
         {
-            currentSpeed += speedIncreasePerSecond * ((3 * Time.deltaTime) / 2 );
+            currentSpeed += speedIncreasePerSecond * ((3 * Time.deltaTime) / 2);
             currentSpeed = Mathf.Min(currentSpeed, maxSpeed);                       // Math.Min nimmt einfach den kleineren der beiden folgeneden Werte, hier wichtig, damit die Geschwindigkeit das Geschwindigkeitsmaximum nicht �bertrifft
 
             rb.linearVelocity = rb.linearVelocity.normalized * currentSpeed;        // .normalized beh�lt die selbe richtung an und �ndert die l�nge bzw magnitude des Vektors zu 1, diese wird dann sp�ter auf die geschwindigkeit (currentspeed) ge�ndert 

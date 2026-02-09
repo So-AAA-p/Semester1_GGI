@@ -14,6 +14,7 @@ TagManager:
   - BO_Shield
   - BO_Paddle
   - BO_MoldShot
+  - PongObstacle
   layers:
   - Default
   - TransparentFX

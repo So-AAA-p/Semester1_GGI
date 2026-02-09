@@ -10,8 +10,10 @@ namespace Pong
         public enum Direction
         {
             Positive,                                                           // hoch oder nach rechts
-            Negative                                                            // runter oder nach links
+            Negative,                                                           // runter oder nach links
+            None
         }
+
 
         public bool moveHorizontally = false;
         private bool sizeLocked;
@@ -23,6 +25,7 @@ namespace Pong
 
         private SpriteRenderer sr;
         private Color originalColor;
+        private Rigidbody2D paddleRb;
 
         public static readonly Color DarkGreen = new Color(0.2f, 0.5f, 0.2f);
         public static readonly Color DarkRed = new Color(0.5f, 0.2f, 0.2f);
@@ -31,6 +34,7 @@ namespace Pong
         {
             sr = GetComponent<SpriteRenderer>();
             originalColor = sr.color;
+            paddleRb = GetComponent<Rigidbody2D>();
         }
 
         public bool ModifySize(float delta)
@@ -68,15 +72,28 @@ namespace Pong
 
         void Update()
         {
-            if(Input.GetKey(controls.PositiveKey))
+            float input = 0;
+            if (Input.GetKey(controls.PositiveKey)) input = 1;
+            if (Input.GetKey(controls.NegativeKey)) input = -1;
+
+            // Check level from the Manager
+            bool isLevel1 = PongManager.instance.currentLevel == PongManager.LevelType.Classic;
+
+            if (isLevel1 && paddleRb != null)
             {
-                //Debug.Log("Nach unten gedrückt");
-                Move(Direction.Positive);
+                // ONLY Level 1 gets this
+                ApplyIceMovement(input);
             }
-            if (Input.GetKey(controls.NegativeKey))
+            else
             {
-                //Debug.Log("Nach oben gedrückt");
-                Move(Direction.Negative);
+                // LEVEL 2, 3, etc. get snappy movement
+                if (paddleRb != null)
+                {
+                    paddleRb.linearVelocity = Vector2.zero;
+                }
+
+                // Use your original Move method for precision
+                Move(input > 0 ? Direction.Positive : (input < 0 ? Direction.Negative : Direction.None));
             }
         }
 
@@ -86,6 +103,12 @@ namespace Pong
             moveAmount *= direction == Direction.Positive ? 1 : -1;
             // int directionMultiplier = direction == Direction.Up ? 1 : -1;
             // moveDistance *= directionMultiplier;
+
+            if (direction == Direction.None)
+            {
+                // If we aren't pressing anything, don't move at all!
+                return;
+            }
 
             if (moveHorizontally)
             {
@@ -112,6 +135,20 @@ namespace Pong
                 );
             }
             //Debug.Log(direction.ToString() + "gedrückt");
+        }
+
+        void ApplyIceMovement(float input)
+        {
+            // We only need to check the axis here, not the level anymore 
+            // because the level check happened in Update()
+            if (moveHorizontally)
+            {
+                paddleRb.AddForce(Vector2.right * input * controls.paddleSpeed);
+            }
+            else
+            {
+                paddleRb.AddForce(Vector2.up * input * controls.paddleSpeed);
+            }
         }
     }
 }

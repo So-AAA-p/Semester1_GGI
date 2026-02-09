@@ -139,7 +139,7 @@ PrefabInstance:
     - target: {fileID: 5213010960384970659, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+      objectReference: {fileID: 2100000, guid: dc6f5870f9644224f84e10a4d268837c, type: 2}
     - target: {fileID: 6202663051245857347, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: m_Name
       value: PB_UnderWater Variant

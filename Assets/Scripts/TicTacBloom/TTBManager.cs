@@ -8,7 +8,7 @@ using System.Collections.Generic; // für Listen
 
 namespace TicTacToe
 {
-    public class TicTacBloomMan : MonoBehaviour
+    public class TTBManager : MonoBehaviour
     {
         int currentPlayer = 0;
 
@@ -24,8 +24,8 @@ namespace TicTacToe
         public int gridWidth = 4;
         public int gridHeight = 4;
 
-        private FieldButton[,] grid;
-        public FieldButton[] fieldbuttons;
+        private TTBFieldButton[,] grid;
+        public TTBFieldButton[] fieldbuttons;
 
         int player1Score = 0;
         int player2Score = 0;
@@ -60,14 +60,14 @@ namespace TicTacToe
             currentPlayer = startingPlayer;
             UpdateInfoText();
 
-            grid = new FieldButton[gridWidth, gridHeight];
+            grid = new TTBFieldButton[gridWidth, gridHeight];
 
             for (int i = 0; i < fieldbuttons.Length; i++)
             {
                 int x = i % gridWidth;
                 int y = i / gridWidth;
 
-                FieldButton fb = fieldbuttons[i];
+                TTBFieldButton fb = fieldbuttons[i];
                 fb.x = x;
                 fb.y = y;
 
@@ -104,7 +104,7 @@ namespace TicTacToe
             {
                 for (int y = 0; y < gridHeight; y++)
                 {
-                    FieldButton center = grid[x, y];
+                    TTBFieldButton center = grid[x, y];
 
                     if (center.owner == ButtonOwner.None || center.stage != GrowthStage.Seed)
                         continue;
@@ -122,7 +122,7 @@ namespace TicTacToe
                             if (nx < 0 || nx >= gridWidth || ny < 0 || ny >= gridHeight)
                                 continue;
 
-                            FieldButton neighbor = grid[nx, ny];
+                            TTBFieldButton neighbor = grid[nx, ny];
 
                             if (
                                 neighbor.owner == center.owner &&
@@ -145,7 +145,7 @@ namespace TicTacToe
                 {
                     if (shouldSprout[x, y])
                     {
-                        FieldButton fb = grid[x, y];
+                        TTBFieldButton fb = grid[x, y];
                         if (fb.stage == GrowthStage.Seed)
                             fb.AdvanceGrowth(); // Seed → Sprout
                     }
@@ -165,7 +165,7 @@ namespace TicTacToe
                 : "Current Player: 1";
         }
 
-        public void OnButtonClickedMan(FieldButton fieldButton)
+        public void OnButtonClickedMan(TTBFieldButton fieldButton)
         {
             if (fieldButton.owner != ButtonOwner.None)
                 return;
@@ -190,7 +190,7 @@ namespace TicTacToe
             UpdateInfoText();
         }
 
-        int CountInLine(FieldButton start, Vector2Int dir, ButtonOwner owner, GrowthStage stage)
+        int CountInLine(TTBFieldButton start, Vector2Int dir, ButtonOwner owner, GrowthStage stage)
         {
             int count = 1; // include start
 
@@ -203,7 +203,7 @@ namespace TicTacToe
             return count;
         }
 
-        int CountDirection(FieldButton start, Vector2Int dir, ButtonOwner owner, GrowthStage stage)
+        int CountDirection(TTBFieldButton start, Vector2Int dir, ButtonOwner owner, GrowthStage stage)
         {
             int count = 0;
             int x = start.x + dir.x;
@@ -211,7 +211,7 @@ namespace TicTacToe
 
             while (x >= 0 && x < gridWidth && y >= 0 && y < gridHeight)
             {
-                FieldButton fb = grid[x, y];
+                TTBFieldButton fb = grid[x, y];
 
                 if (fb.owner != owner || fb.stage != stage)
                     break;
@@ -233,13 +233,13 @@ namespace TicTacToe
 
         void DisableButtons()
         {
-            foreach (FieldButton fieldButton in fieldbuttons)
+            foreach (TTBFieldButton fieldButton in fieldbuttons)
             {
                 fieldButton.DisableButton();
             }
         }
 
-        void CheckForWinner(FieldButton lastPlaced)
+        void CheckForWinner(TTBFieldButton lastPlaced)
         {
             if (gameOver)
                 return;
@@ -258,7 +258,7 @@ namespace TicTacToe
 
                 if (count >= 3)
                 {
-                    List<FieldButton> line = new List<FieldButton>();
+                    List<TTBFieldButton> line = new List<TTBFieldButton>();
                     line.Add(lastPlaced);
 
                     CollectDirection(lastPlaced, dir, line);
@@ -282,7 +282,7 @@ namespace TicTacToe
             //  }
         }
 
-        IEnumerator ResolveWinGrowth(List<FieldButton> line)
+        IEnumerator ResolveWinGrowth(List<TTBFieldButton> line)
         {
             foreach (var fb in line)
                 fb.AdvanceGrowth(); // Sprout → Seedling
@@ -331,21 +331,21 @@ namespace TicTacToe
 
         void ResetBoard()
         {
-            foreach (FieldButton fb in fieldbuttons)
+            foreach (TTBFieldButton fb in fieldbuttons)
             {
                 fb.ResetTile(); // you likely already have this
                 fb.EnableButton();
             }
         }
 
-        void CollectDirection(FieldButton start, Vector2Int dir, List<FieldButton> line)
+        void CollectDirection(TTBFieldButton start, Vector2Int dir, List<TTBFieldButton> line)
         {
             int x = start.x + dir.x;
             int y = start.y + dir.y;
 
             while (x >= 0 && x < gridWidth && y >= 0 && y < gridHeight)
             {
-                FieldButton fb = grid[x, y];
+                TTBFieldButton fb = grid[x, y];
 
                 if (fb.owner != start.owner || fb.stage != GrowthStage.Sprout)
                     break;
@@ -380,7 +380,7 @@ namespace TicTacToe
 
         bool IsBoardFull()
         {
-            foreach (FieldButton fb in fieldbuttons)                                                // fb als abkürzung für fieldbutton
+            foreach (TTBFieldButton fb in fieldbuttons)                                                // fb als abkürzung für fieldbutton
             {
                 if (fb.owner == ButtonOwner.None)
                 {

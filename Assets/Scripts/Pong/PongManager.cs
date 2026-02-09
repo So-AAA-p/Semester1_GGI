@@ -20,7 +20,7 @@ namespace Pong
             Playing,
             GameDone
         }
-
+        
         public enum LevelType
         {
             Classic,

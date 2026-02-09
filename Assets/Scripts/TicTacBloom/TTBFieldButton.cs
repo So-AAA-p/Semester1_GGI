@@ -4,9 +4,9 @@ using UnityEngine.UI;
 //extra scipt für die buttons, weil wir nicht wissen mit wie vielen buttons wir arbeiten, deswegen so einfacher und übersichtlicher bzw so einfacher auf andere Anzhal buttons anzupassen!
 namespace TicTacToe
 {
-    public class FieldButton : MonoBehaviour
+    public class TTBFieldButton : MonoBehaviour
     {
-        private TicTacBloomMan TTBManager;
+        private TTBManager TTBManager;
 
         public int FieldValue = -1;                                                             // -1 als beispiel, kann auch anderer Wert sein
                                                                                                 // -1 wird oft benutzt, um nichts bzw eine leere Variable zu kennzeichnen
@@ -44,7 +44,7 @@ namespace TicTacToe
             // nicht mehr gebraucht, weil unten SetManager Funktion 
         }
 
-        public void SetManager(TicTacBloomMan newManager)
+        public void SetManager(TTBManager newManager)
         {
             TTBManager = newManager;
         }
