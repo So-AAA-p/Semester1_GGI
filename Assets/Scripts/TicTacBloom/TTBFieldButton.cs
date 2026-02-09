@@ -6,7 +6,7 @@ namespace TicTacToe
 {
     public class TTBFieldButton : MonoBehaviour
     {
-        private TTBManager TTBManager;
+        private TTBManager TTBMan;
 
         public int FieldValue = -1;                                                             // -1 als beispiel, kann auch anderer Wert sein
                                                                                                 // -1 wird oft benutzt, um nichts bzw eine leere Variable zu kennzeichnen
@@ -16,6 +16,11 @@ namespace TicTacToe
         public ButtonOwner owner;
         public GrowthStage stage;
 
+        [Header("Dirt Tinting")]
+        [SerializeField] private Image backgroundImage; // The dirt sprite image
+        [SerializeField] private Color player1Tint = new Color(0.7f, 1f, 0.7f); // Greenish tint
+        [SerializeField] private Color player2Tint = new Color(1f, 0.7f, 0.7f); // Reddish/Pinkish tint
+        [SerializeField] private Color neutralColor = Color.white; // No tint (normal sprite)
 
         [SerializeField] private Image image;
         //[SerializeField] private Animator animator;
@@ -46,7 +51,7 @@ namespace TicTacToe
 
         public void SetManager(TTBManager newManager)
         {
-            TTBManager = newManager;
+            TTBMan = newManager;
         }
 
 
@@ -54,8 +59,10 @@ namespace TicTacToe
         {
             if (owner == ButtonOwner.None)            // wenn das Feld schon belegt ist, dann nichts machen
             {
-                TTBManager.OnButtonClickedMan(this);
+                TTBMan.OnButtonClickedMan(this);
             }
+
+            TTBMan.AdvanceWeather();
         }
 
 
@@ -65,6 +72,8 @@ namespace TicTacToe
 
             owner = newOwner;
             stage = newStage;
+
+            UpdateBackgroundTint(owner);
 
             if (image == null)
             {
@@ -85,6 +94,24 @@ namespace TicTacToe
 
             //Vinc: Bild aktivieren, damit Sprite angezeigt wird :3
             image.enabled = true;
+        }
+
+        public void UpdateBackgroundTint(ButtonOwner currentOwner)
+        {
+            if (backgroundImage == null) return;
+
+            switch (currentOwner)
+            {
+                case ButtonOwner.Player1:
+                    backgroundImage.color = player1Tint;
+                    break;
+                case ButtonOwner.Player2:
+                    backgroundImage.color = player2Tint;
+                    break;
+                case ButtonOwner.None:
+                    backgroundImage.color = neutralColor;
+                    break;
+            }
         }
 
         public void DisableButton()
@@ -138,6 +165,7 @@ namespace TicTacToe
             image.sprite = null;
             image.enabled = false;
 
+            backgroundImage.color = neutralColor;
             GetComponent<Button>().interactable = true;
         }
 

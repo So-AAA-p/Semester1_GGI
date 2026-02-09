@@ -226,4 +226,8 @@ MonoBehaviour:
   y: 0
   owner: 0
   stage: 0
+  backgroundImage: {fileID: 9076867611061890622}
+  player1Tint: {r: 1, g: 1, b: 1, a: 1}
+  player2Tint: {r: 1, g: 0.91811323, b: 0.8537736, a: 1}
+  neutralColor: {r: 1, g: 1, b: 1, a: 1}
   image: {fileID: 4620466083135276815}

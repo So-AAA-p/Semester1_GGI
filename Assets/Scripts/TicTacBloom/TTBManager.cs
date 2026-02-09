@@ -36,6 +36,18 @@ namespace TicTacToe
         [SerializeField] float sproutToSeedlingDelay = 0.6f;
         [SerializeField] float seedlingToPlantDelay = 0.3f;
 
+        [Header("Weather Settings")]
+        public int turnsUntilDrought = 4;
+        public int turnsUntilRain = 3;
+
+        private int droughtCounter = 0;
+        private int rainCounter = 0;
+
+        [Header("Weather UI")]
+        public TextMeshProUGUI heatwaveText; // Assign your Drought text field
+        public TextMeshProUGUI bountyText;   // Assign your Sun Shower text field
+
+
         readonly Vector2Int[] directions =
         {
             new Vector2Int(1, 0),
@@ -56,6 +68,7 @@ namespace TicTacToe
             player1Score = 0;
             player2Score = 0;
             UpdateScoreUI();
+            UpdateWeatherUI();
 
             currentPlayer = startingPlayer;
             UpdateInfoText();
@@ -93,6 +106,80 @@ namespace TicTacToe
             {
                 player2ScoreIcons[i].SetActive(i < player2Score);
             }
+        }
+
+        public void AdvanceWeather()
+        {
+            droughtCounter++;
+            rainCounter++;
+
+            // --- RAIN / SUN SHOWER ---
+            if (rainCounter >= turnsUntilRain)
+            {
+                TriggerRain();
+                rainCounter = 0;
+            }
+
+            // --- DROUGHT / HEATWAVE ---
+            if (droughtCounter >= turnsUntilDrought)
+            {
+                TriggerDrought();
+                droughtCounter = 0;
+            }
+
+            UpdateWeatherUI();
+        }
+
+        void TriggerRain()
+        {
+            List<TTBFieldButton> emptyFields = new List<TTBFieldButton>();
+            foreach (var fb in fieldbuttons)
+            {
+                if (fb.owner == ButtonOwner.None) emptyFields.Add(fb);
+            }
+
+            if (emptyFields.Count > 0)
+            {
+                int randomIndex = Random.Range(0, emptyFields.Count);
+                // Randomly give it to Player 1 or Player 2
+                ButtonOwner randomOwner = Random.value > 0.5f ? ButtonOwner.Player1 : ButtonOwner.Player2;
+
+                emptyFields[randomIndex].SetTile(randomOwner, GrowthStage.Seed);
+                Debug.Log("A Sun Shower caused a seed to sprout!");
+
+                // Check if this random growth finished the game
+                CheckForWinner(emptyFields[randomIndex]);
+            }
+        }
+
+        void TriggerDrought()
+        {
+            List<TTBFieldButton> occupiedFields = new List<TTBFieldButton>();
+            foreach (var fb in fieldbuttons)
+            {
+                if (fb.owner != ButtonOwner.None) occupiedFields.Add(fb);
+            }
+
+            // We take 1 or 2 random plants (let's start with 1 for balance!)
+            if (occupiedFields.Count > 0)
+            {
+                int randomIndex = Random.Range(0, occupiedFields.Count);
+                occupiedFields[randomIndex].ResetTile();
+                Debug.Log("A Heatwave dried out a plant!");
+            }
+        }
+
+        void UpdateWeatherUI()
+        {
+            // Subtracting the current counter from the max tells us how many turns are LEFT
+            int heatwaveRemaining = turnsUntilDrought - droughtCounter;
+            int bountyRemaining = turnsUntilRain - rainCounter;
+
+            if (heatwaveText != null)
+                heatwaveText.text = heatwaveRemaining.ToString();
+
+            if (bountyText != null)
+                bountyText.text = bountyRemaining.ToString();
         }
 
         void ApplySproutGrowth()
