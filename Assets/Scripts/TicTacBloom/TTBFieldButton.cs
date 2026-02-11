@@ -54,6 +54,10 @@ namespace TicTacToe
             TTBMan = newManager;
         }
 
+        public Image GetPlantImage()
+        {
+            return image;
+        }
 
         public void OnButtonClicked()
         {
@@ -61,8 +65,6 @@ namespace TicTacToe
             {
                 TTBMan.OnButtonClickedMan(this);
             }
-
-            TTBMan.AdvanceWeather();
         }
 
 

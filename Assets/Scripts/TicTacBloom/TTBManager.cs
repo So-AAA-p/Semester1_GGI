@@ -20,12 +20,14 @@ namespace TicTacToe
         public GameObject Visuals;
 
         bool gameOver = false;
+        private bool isBusy = false;
 
         public int gridWidth = 4;
         public int gridHeight = 4;
 
         private TTBFieldButton[,] grid;
         public TTBFieldButton[] fieldbuttons;
+        //private TTBFieldButton lastRainTarget; YAYA
 
         int player1Score = 0;
         int player2Score = 0;
@@ -37,15 +39,18 @@ namespace TicTacToe
         [SerializeField] float seedlingToPlantDelay = 0.3f;
 
         [Header("Weather Settings")]
-        public int turnsUntilDrought = 4;
-        public int turnsUntilRain = 3;
-
+        public int turnsUntilDrought = 6; // Increased from 4
+        public int turnsUntilRain = 5;    // Increased from 3
         private int droughtCounter = 0;
         private int rainCounter = 0;
 
         [Header("Weather UI")]
-        public TextMeshProUGUI heatwaveText; // Assign your Drought text field
-        public TextMeshProUGUI bountyText;   // Assign your Sun Shower text field
+        public TextMeshProUGUI heatwaveText;
+        public TextMeshProUGUI bountyText;
+        public Color warningColorRed = Color.red;
+        public Color warningColorBlue = new Color(0.2f, 0.5f, 1f); // Nice Blue
+
+        private List<TTBFieldButton> protectedTiles = new List<TTBFieldButton>();
 
 
         readonly Vector2Int[] directions =
@@ -108,78 +113,140 @@ namespace TicTacToe
             }
         }
 
-        public void AdvanceWeather()
+        public void AdvanceWeather(TTBFieldButton justPlacedButton)
         {
+            // Point 11: Only advances if a valid move was made (called from OnButtonClickedMan)
+            if (gameOver) return;
+
             droughtCounter++;
             rainCounter++;
 
-            // --- RAIN / SUN SHOWER ---
+            UpdateWeatherUI();
+
+            // Start the weather sequence (Point 3: Delay for clarity)
+            StartCoroutine(HandleWeatherSequence(justPlacedButton));
+        }
+
+        IEnumerator HandleWeatherSequence(TTBFieldButton justPlacedButton)
+        {
+            // Wait for the initial move to breathe
+            yield return new WaitForSeconds(0.5f);
+
+            // --- SUN SHOWER ---
             if (rainCounter >= turnsUntilRain)
             {
-                TriggerRain();
                 rainCounter = 0;
+                yield return StartCoroutine(TriggerSunShowerRoutine());
             }
 
-            // --- DROUGHT / HEATWAVE ---
+            // --- HEATWAVE ---
             if (droughtCounter >= turnsUntilDrought)
             {
-                TriggerDrought();
                 droughtCounter = 0;
+                yield return StartCoroutine(TriggerDroughtRoutine(justPlacedButton));
             }
 
             UpdateWeatherUI();
+
+            // FINALLY: Unlock the board for the next player!
+            isBusy = false;
         }
 
-        void TriggerRain()
+        IEnumerator TriggerSunShowerRoutine()
         {
-            List<TTBFieldButton> emptyFields = new List<TTBFieldButton>();
+            List<TTBFieldButton> safeFields = new List<TTBFieldButton>();
+
             foreach (var fb in fieldbuttons)
             {
-                if (fb.owner == ButtonOwner.None) emptyFields.Add(fb);
+                if (fb.owner == ButtonOwner.None)
+                {
+                    // Check if placing for P1 OR P2 would cause a win
+                    bool p1Win = WouldCauseWin(fb, ButtonOwner.Player1);
+                    bool p2Win = WouldCauseWin(fb, ButtonOwner.Player2);
+
+                    // Only add to our list if it's safe for everyone
+                    if (!p1Win && !p2Win)
+                    {
+                        safeFields.Add(fb);
+                    }
+                }
             }
 
-            if (emptyFields.Count > 0)
+            // If there are no "safe" spots left, the Sun Shower just skips this turn 
+            // (Better to have no rain than an unfair win!)
+            if (safeFields.Count > 0)
             {
-                int randomIndex = Random.Range(0, emptyFields.Count);
-                // Randomly give it to Player 1 or Player 2
+                TTBFieldButton target = safeFields[Random.Range(0, safeFields.Count)];
+
+                yield return StartCoroutine(FlashButton(target, warningColorBlue));
+
                 ButtonOwner randomOwner = Random.value > 0.5f ? ButtonOwner.Player1 : ButtonOwner.Player2;
+                target.SetTile(randomOwner, GrowthStage.Seed);
 
-                emptyFields[randomIndex].SetTile(randomOwner, GrowthStage.Seed);
-                Debug.Log("A Sun Shower caused a seed to sprout!");
-
-                // Check if this random growth finished the game
-                CheckForWinner(emptyFields[randomIndex]);
+                // Even though we checked, we still call Sprout growth to be safe
+                ApplySproutGrowth();
+                // Since it's a "safe" seed, CheckForWinner usually won't trigger, but keep it for consistency
+                CheckForWinner(target);
+            }
+            else
+            {
+                Debug.Log("Sun Shower skipped: No safe spots to grow without causing a win!");
             }
         }
 
-        void TriggerDrought()
+        IEnumerator TriggerDroughtRoutine(TTBFieldButton justPlaced)
         {
             List<TTBFieldButton> occupiedFields = new List<TTBFieldButton>();
             foreach (var fb in fieldbuttons)
             {
-                if (fb.owner != ButtonOwner.None) occupiedFields.Add(fb);
+                // Point 5: Only occupied
+                // Point 7: Not part of a winning combo
+                // Point 8: Not the button the player JUST clicked
+                if (fb.owner != ButtonOwner.None &&
+                    !protectedTiles.Contains(fb) &&
+                    fb != justPlaced)
+                {
+                    occupiedFields.Add(fb);
+                }
             }
 
-            // We take 1 or 2 random plants (let's start with 1 for balance!)
             if (occupiedFields.Count > 0)
             {
-                int randomIndex = Random.Range(0, occupiedFields.Count);
-                occupiedFields[randomIndex].ResetTile();
-                Debug.Log("A Heatwave dried out a plant!");
+                TTBFieldButton target = occupiedFields[Random.Range(0, occupiedFields.Count)];
+
+                // Point 4: Flash Red
+                yield return StartCoroutine(FlashButton(target, warningColorRed));
+
+                target.ResetTile();
+            }
+        }
+
+        IEnumerator FlashButton(TTBFieldButton btn, Color flashColor)
+        {
+            Image bg = btn.GetComponent<Image>();
+            Color oldColor = bg.color;
+
+            for (int i = 0; i < 3; i++) // Flash 3 times
+            {
+                bg.color = flashColor;
+                yield return new WaitForSeconds(0.2f);
+                bg.color = oldColor;
+                yield return new WaitForSeconds(0.2f);
             }
         }
 
         void UpdateWeatherUI()
         {
-            // Subtracting the current counter from the max tells us how many turns are LEFT
             int heatwaveRemaining = turnsUntilDrought - droughtCounter;
             int bountyRemaining = turnsUntilRain - rainCounter;
 
-            if (heatwaveText != null)
-                heatwaveText.text = heatwaveRemaining.ToString();
+            heatwaveText.text = heatwaveRemaining.ToString();
+            // Point 1: Turn Red at 1
+            heatwaveText.color = (heatwaveRemaining <= 1) ? warningColorRed : Color.white;
 
-            if (bountyText != null)
-                bountyText.text = bountyRemaining.ToString();
+            bountyText.text = bountyRemaining.ToString();
+            // Point 2: Turn Blue at 1
+            bountyText.color = (bountyRemaining <= 1) ? warningColorBlue : Color.white;
         }
 
         void ApplySproutGrowth()
@@ -254,24 +321,24 @@ namespace TicTacToe
 
         public void OnButtonClickedMan(TTBFieldButton fieldButton)
         {
-            if (fieldButton.owner != ButtonOwner.None)
+            // Point 11: Added isBusy check here!
+            if (gameOver || isBusy || fieldButton.owner != ButtonOwner.None)
                 return;
 
-            ButtonOwner owner =
-                currentPlayer == 0 ? ButtonOwner.Player1 : ButtonOwner.Player2;
+            isBusy = true; // LOCK the board
 
             // 1. Place seed
+            ButtonOwner owner = currentPlayer == 0 ? ButtonOwner.Player1 : ButtonOwner.Player2;
             fieldButton.SetTile(owner, GrowthStage.Seed);
 
-            // 2. Fully resolve sprout growth
+            // 2. Growth logic
             ApplySproutGrowth();
 
-            // (Later)
-            // ApplySeedlingGrowth();
-            // ApplyPlantGrowthAndWin();
-
-            // 3. NOW it's safe to check for winner
+            // 3. Check for winner
             CheckForWinner(fieldButton);
+
+            // 4. Advance weather
+            AdvanceWeather(fieldButton);
 
             currentPlayer = currentPlayer == 1 ? 0 : 1;
             UpdateInfoText();
@@ -371,34 +438,71 @@ namespace TicTacToe
 
         IEnumerator ResolveWinGrowth(List<TTBFieldButton> line)
         {
+            protectedTiles.AddRange(line); // Protect them from drought during the animation
+
+            // 1. Advance to Seedling
             foreach (var fb in line)
-                fb.AdvanceGrowth(); // Sprout → Seedling
+                fb.AdvanceGrowth();
 
             yield return new WaitForSeconds(sproutToSeedlingDelay);
 
+            // 2. Advance to Plant
             foreach (var fb in line)
-                fb.AdvanceGrowth(); // Seedling → Plant
+                fb.AdvanceGrowth();
 
             yield return new WaitForSeconds(seedlingToPlantDelay);
 
+            // --- EASTER EGG CHECK ---
+            // If the professor managed to get 4 in a row!
+            if (line.Count >= 4)
+            {
+                Debug.Log("Easter Egg Triggered: 4 in a row!");
+                yield return StartCoroutine(SpinWinningPlants(line));
+            }
+
+            // 3. Finally score the point
             ScorePoint(line[0].owner);
+        }
+
+        // The Rotation Logic
+        IEnumerator SpinWinningPlants(List<TTBFieldButton> line)
+        {
+            float duration = 0.8f; // How long the spin takes
+            float elapsed = 0f;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+
+                // Calculate the rotation (0 to 360 degrees)
+                float currentRotation = Mathf.Lerp(0, 360, elapsed / duration);
+
+                foreach (var fb in line)
+                {
+                    // We rotate the rectTransform of the plant image
+                    fb.GetPlantImage().rectTransform.localEulerAngles = new Vector3(0, 0, currentRotation);
+                }
+
+                yield return null; // Wait for next frame
+            }
+
+            // Ensure they are perfectly snapped back to 0 at the end
+            foreach (var fb in line)
+            {
+                fb.GetPlantImage().rectTransform.localEulerAngles = Vector3.zero;
+            }
+
+            yield return new WaitForSeconds(0.2f); // Tiny pause for dramatic effect
         }
 
         IEnumerator NextRoundRoutine(ButtonOwner roundWinner)
         {
-            // Show round result UI here
-            // (activate your GameObjects here)
-            // example:
-            // roundWinPanel.SetActive(true);
-
             yield return new WaitForSeconds(1.5f);
-
-            // Hide round UI again
-            // roundWinPanel.SetActive(false);
 
             ResetBoard();
 
             gameOver = false;
+            isBusy = false; // Ensure it's unlocked for the new round!
             currentPlayer = startingPlayer;
             UpdateInfoText();
         }
@@ -443,6 +547,32 @@ namespace TicTacToe
             }
         }
 
+        bool WouldCauseWin(TTBFieldButton target, ButtonOwner potentialOwner)
+        {
+            // 1. Temporarily "fake" the state of this button
+            // We check for Sprout stage because that's what your CheckForWinner looks for
+            target.owner = potentialOwner;
+            target.stage = GrowthStage.Sprout;
+
+            bool winDetected = false;
+
+            // 2. Run the same line-check logic you use for regular wins
+            foreach (var dir in directions)
+            {
+                if (CountInLine(target, dir, potentialOwner, GrowthStage.Sprout) >= 3)
+                {
+                    winDetected = true;
+                    break;
+                }
+            }
+
+            // 3. IMPORTANT: Reset the button back to empty
+            target.owner = ButtonOwner.None;
+            target.stage = GrowthStage.None;
+
+            return winDetected;
+        }
+
         void ScorePoint(ButtonOwner winner)
         {
             if (winner == ButtonOwner.Player1)
@@ -450,18 +580,22 @@ namespace TicTacToe
             else
                 player2Score++;
 
+            droughtCounter = 0;
+            rainCounter = 0;
+            protectedTiles.Clear(); // Clear the "locked" winning tiles for the next round
+            UpdateWeatherUI();
             UpdateScoreUI();
-            // 🔁 swap starting player for next round
+            //  swap starting player for next round
             startingPlayer = startingPlayer == 0 ? 1 : 0;
 
-            // 🏆 check match win
+            //  check match win
             if (player1Score >= pointsToWin || player2Score >= pointsToWin)
             {
                 EndMatch(winner);
                 return;
             }
 
-            // 🎯 otherwise: start next round
+            //  otherwise: start next round
             StartCoroutine(NextRoundRoutine(winner));
         }
 
@@ -498,7 +632,7 @@ namespace TicTacToe
 
             ResetBoard();
 
-            // 🔁 starting player still swaps on draw (optional, but recommended)
+            //  starting player still swaps on draw (optional, but recommended)
             startingPlayer = startingPlayer == 0 ? 1 : 0;
 
             currentPlayer = startingPlayer;

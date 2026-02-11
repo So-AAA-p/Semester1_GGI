@@ -2816,10 +2816,12 @@ MonoBehaviour:
   - {fileID: 476854801}
   sproutToSeedlingDelay: 0.6
   seedlingToPlantDelay: 0.3
-  turnsUntilDrought: 4
-  turnsUntilRain: 3
+  turnsUntilDrought: 5
+  turnsUntilRain: 4
   heatwaveText: {fileID: 1237600491}
   bountyText: {fileID: 1262991324}
+  warningColorRed: {r: 1, g: 0, b: 0, a: 0.6509804}
+  warningColorBlue: {r: 0.2, g: 0.5, b: 1, a: 0.40392157}
 --- !u!1001 &952843090
 PrefabInstance:
   m_ObjectHideFlags: 0
