@@ -26,29 +26,21 @@ namespace BreakOut
         }
 
         // --- NEW SIZE LOGIC ---
-
         public void ShrinkPaddle()
         {
             Vector3 currentScale = transform.localScale;
-            // Subtract the step, but don't go below minScale
             currentScale.x = Mathf.Max(controls.minScale, currentScale.x - controls.shrinkStep);
             transform.localScale = currentScale;
-
-            //Debug.Log($"[Paddle] Shrunk! Current Width: {currentScale.x}");
         }
 
         public void RestorePaddle()
         {
             Vector3 currentScale = transform.localScale;
-            // Add the step, but don't go above maxScale
             currentScale.x = Mathf.Min(controls.maxScale, currentScale.x + controls.restoreStep);
             transform.localScale = currentScale;
-
-            //Debug.Log($"[Paddle] Restored! Current Width: {currentScale.x}");
         }
 
         // --- EXISTING MOVEMENT ---
-
         void Update()
         {
             bool reversed = BO_Manager.instance.controlsReversed;
@@ -98,17 +90,17 @@ namespace BreakOut
         {
             if (collision.CompareTag("BO_Blueberry"))
             {
-                // 1. Only tell Stage 2 Manager if we aren't in Phase 3 yet!
-                // This prevents the Manager from thinking the "Recipe" is finished.
+                // 1. Tell Leaf/Stage logic
                 if (BO_LeafManager.Instance != null && !BO_LeafManager.Instance.isPhase3Active)
                 {
                     BO_BlueberryManager.Instance.CollectBerry();
                 }
 
-                // 2. Always fill the Jam Meter
-                if (BO_JamController.Instance != null)
+                // 2. FILL THE JAM METER (Updated to use PowerUpController)
+                // Note: We use 'instance' (lowercase) to match the PowerUp script
+                if (BO_PowerUpController.instance != null)
                 {
-                    BO_JamController.Instance.AddBerry();
+                    BO_PowerUpController.instance.AddBerry();
                 }
 
                 Destroy(collision.gameObject);

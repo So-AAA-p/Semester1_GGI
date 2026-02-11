@@ -39,6 +39,31 @@ namespace BreakOut
             base.OnBreak();
         }
 
+        protected override void OnBreak()
+        {
+            if (BO_BlueberryManager.Instance != null)
+            {
+                // Tell the manager we were hit
+                BO_BlueberryManager.Instance.OnLeafHit(this);
+
+                // ONLY destroy the block if the manager has emptied it
+                if (berryCount <= 0)
+                {
+                    base.OnBreak();
+                }
+                else
+                {
+                    // If we still have berries, we play a "hit" sound/effect 
+                    // but we DON'T call base.OnBreak() so the object stays alive.
+                    Debug.Log($"{gameObject.name} still has {berryCount} berries. Staying alive!");
+                }
+            }
+            else
+            {
+                // Safety: If there's no manager, just behave like a normal block
+                base.OnBreak();
+            }
+        }
 
         private void UpdateVisuals()
         {
@@ -50,16 +75,16 @@ namespace BreakOut
             switch (berryCount)
             {
                 case 3:
-                    // berryIndicator.sprite = sprite3Berries; 
-                    berryIndicator.color = Color.red; // Temp placeholder
+                    berryIndicator.sprite = sprite3Berries; 
+                    //berryIndicator.color = Color.red; // Temp placeholder
                     break;
                 case 2:
-                    // berryIndicator.sprite = sprite2Berries;
-                    berryIndicator.color = Color.yellow; // Temp placeholder
+                    berryIndicator.sprite = sprite2Berries;
+                    //berryIndicator.color = Color.yellow; // Temp placeholder
                     break;
                 case 1:
-                    // berryIndicator.sprite = sprite1Berry;
-                    berryIndicator.color = Color.white; // Light blue
+                    berryIndicator.sprite = sprite1Berry;
+                    //berryIndicator.color = Color.white; // Light blue
                     break;
             }
         }

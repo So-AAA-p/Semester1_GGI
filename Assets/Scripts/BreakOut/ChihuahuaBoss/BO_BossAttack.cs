@@ -39,9 +39,15 @@ namespace BreakOut
 
         IEnumerator AttackRoutine()
         {
-            while (true)
+            // Change 'true' to check if the boss is still alive
+            while (BO_BossHead.Instance != null && !BO_BossHead.Instance.isDead)
             {
-                // 1. Determine how long to wait based on the CURRENT phase
+                if (BO_BossHead.Instance.currentPhase == BO_BossHead.Phase.PhaseZero)
+                {
+                    yield return null;
+                    continue;
+                }
+
                 currentWaitTime = fireRatePhase1; // Default
 
                 if (BO_BossHead.Instance != null)
@@ -60,13 +66,15 @@ namespace BreakOut
                     }
                 }
 
-                // 2. Wait for that specific time
                 yield return new WaitForSeconds(currentWaitTime);
 
-                // 3. Shoot!
-                if (BO_BossHead.Instance != null && !isStunned)
+                // One last check before shooting
+                if (BO_BossHead.Instance != null && !BO_BossHead.Instance.isDead && !isStunned)
                 {
-                    ShootAtPlayer();
+                    if (BO_BossHead.Instance.currentPhase != BO_BossHead.Phase.PhaseZero)
+                    {
+                        ShootAtPlayer();
+                    }
                 }
             }
         }
@@ -91,6 +99,7 @@ namespace BreakOut
         void ShootAtPlayer()
         {
             if (playerPaddle == null) return;
+            BO_BossHead.Instance.SetBossSprite(BO_BossHead.Instance.attackSprite);
 
             // Setup variables
             float currentMaxWobble = 0f;
@@ -115,6 +124,9 @@ namespace BreakOut
                     currentSpeed = speedPhase3;
                     debugPhase = "Phase 3";
                     break;
+                default:
+                    // If somehow we got here in PhaseZero, return and don't shoot
+                    return;
             }
 
             // Calculate Aim
@@ -133,6 +145,17 @@ namespace BreakOut
             if (moldScript != null)
             {
                 moldScript.SetSpeed(currentSpeed);
+            }
+
+            Invoke("ResetMouth", 0.2f);
+        }
+
+        void ResetMouth()
+        {
+            // Only reset if the boss isn't dead
+            if (BO_BossHead.Instance != null && !BO_BossHead.Instance.isDead)
+            {
+                BO_BossHead.Instance.SetBossSprite(BO_BossHead.Instance.normalSprite);
             }
         }
     }

@@ -1,5 +1,92 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5942974200498607163
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2196881225996460945}
+  - component: {fileID: 9089590014277189638}
+  m_Layer: 0
+  m_Name: SugarFixed_0
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2196881225996460945
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5942974200498607163}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.25, y: 0.76327765, z: 0.24974723}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 2614424443335212274}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!212 &9089590014277189638
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5942974200498607163}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 1
+  m_Sprite: {fileID: -1036802500, guid: 078c5fc6804ef4f4489545247fe00e95, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1.42, y: 0.89}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
 --- !u!1001 &6514017105178824146
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10,15 +97,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 356509272355661534, guid: 2443acc0c16c1794085bbc4f241d218d, type: 3}
       propertyPath: m_Color.b
-      value: 1
+      value: 0.3490566
       objectReference: {fileID: 0}
     - target: {fileID: 356509272355661534, guid: 2443acc0c16c1794085bbc4f241d218d, type: 3}
       propertyPath: m_Color.g
-      value: 1
+      value: 0.3490566
       objectReference: {fileID: 0}
     - target: {fileID: 356509272355661534, guid: 2443acc0c16c1794085bbc4f241d218d, type: 3}
       propertyPath: m_Color.r
-      value: 1
+      value: 0.3490566
       objectReference: {fileID: 0}
     - target: {fileID: 5255656297969096373, guid: 2443acc0c16c1794085bbc4f241d218d, type: 3}
       propertyPath: m_Name
@@ -67,7 +154,10 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 4562193660575645637, guid: 2443acc0c16c1794085bbc4f241d218d, type: 3}
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 9092271934113542432, guid: 2443acc0c16c1794085bbc4f241d218d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2196881225996460945}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5255656297969096373, guid: 2443acc0c16c1794085bbc4f241d218d, type: 3}
       insertIndex: -1
@@ -96,3 +186,8 @@ MonoBehaviour:
   ballPrefab: {fileID: 6202663051245857347, guid: fac755e19fec447408d162bfc41dedee, type: 3}
   sizeMultiplier: 0.7
   angleOffset: 20
+--- !u!4 &2614424443335212274 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9092271934113542432, guid: 2443acc0c16c1794085bbc4f241d218d, type: 3}
+  m_PrefabInstance: {fileID: 6514017105178824146}
+  m_PrefabAsset: {fileID: 0}

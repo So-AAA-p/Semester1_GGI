@@ -6,7 +6,7 @@ namespace BreakOut
     public class BO_BossPaw : MonoBehaviour
     {
         [Header("Damage Settings")]
-        public float baseDamage = 10f; 
+        public float baseDamage = 10f;
         public float damageMultiplier = 2.0f;
 
         [Header("Visual Feedback")]
@@ -14,13 +14,13 @@ namespace BreakOut
         public float flashDuration = 0.1f;
 
         [Header("Retraction Mechanic")]
-        public float retractDistance = 2.0f; // How far up it moves
-        public float retractSpeed = 5f;      // Speed of the slide
-        public float cooldownTime = 3.0f;    // How long it stays up
+        public float retractDistance = 2.0f;
+        public float retractSpeed = 5f;
+        public float cooldownTime = 3.0f;
 
         private SpriteRenderer spriteRenderer;
         private Color originalColor;
-        private Vector3 startingPosition;
+        private Vector3 startingPosition; // Now stores World Position
         private bool isRetracted = false;
 
         void Start()
@@ -28,32 +28,32 @@ namespace BreakOut
             spriteRenderer = GetComponent<SpriteRenderer>();
             if (spriteRenderer != null) originalColor = spriteRenderer.color;
 
-            startingPosition = transform.localPosition;
+            // We Initialize this here just in case, 
+            // but the Entrance script will overwrite it with the CORRECT position later.
+            startingPosition = transform.position;
+        }
+
+        // --- NEW METHOD called by Entrance Script ---
+        public void UpdateHomePosition()
+        {
+            // Capture where we are NOW (after the slide) as the new "Home"
+            startingPosition = transform.position;
+            Debug.Log($"[BossPaw] New Home Position set: {startingPosition}");
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            // Only take damage and retract if it's not already "hidden"
             if (!isRetracted && collision.gameObject.CompareTag("BreakOutBall"))
             {
-                // 1. Send damage to Head
                 BO_BossHead.Instance.TakeDamage(baseDamage * damageMultiplier);
-
-                // 2. Start the Retract and Flash sequence
                 StartCoroutine(RetractSequence());
             }
         }
 
-        // This handles the Berry Projectiles (Triggers)
         private void OnTriggerEnter2D(Collider2D other)
         {
-            // Check if it's a projectile and make sure the paw isn't already retracted
             if (!isRetracted && other.CompareTag("BO_Projectile"))
             {
-                // 1. We don't need to send damage here because the Projectile 
-                // script is already doing that! We just handle the movement.
-
-                // 2. Start the Retract and Flash sequence
                 StartCoroutine(RetractSequence());
             }
         }
@@ -62,58 +62,54 @@ namespace BreakOut
         {
             isRetracted = true;
 
-            BO_Paddle.Instance.RestorePaddle();
-            // Use the Head instance to find the Attack script to stun him
-            BO_BossHead.Instance.GetComponent<BO_BossAttack>().StunBoss(3f);
+            if (BO_Paddle.Instance != null) BO_Paddle.Instance.RestorePaddle();
+            if (BO_BossHead.Instance != null) BO_BossHead.Instance.GetComponent<BO_BossAttack>().StunBoss(3f);
 
-            // Visual Flash
             if (spriteRenderer != null) spriteRenderer.color = flashColor;
 
-            // --- Slide UP ---
+            // --- Slide UP (Using World Position) ---
+            // We use the UPDATED startingPosition as the anchor
             Vector3 targetUp = startingPosition + new Vector3(0, retractDistance, 0);
             yield return StartCoroutine(MovePaw(targetUp));
 
-            // Reset color once it's up
             if (spriteRenderer != null) spriteRenderer.color = originalColor;
 
-            // --- Wait in hiding ---
             yield return new WaitForSeconds(cooldownTime);
 
-            // --- Slide DOWN ---
+            // --- Slide DOWN (Back to the UPDATED Home) ---
             yield return StartCoroutine(MovePaw(startingPosition));
 
             isRetracted = false;
         }
 
-        // Helper coroutine to smooth the sliding movement
+        // Helper: Changed from localPosition to position (World) to match Entrance script
         IEnumerator MovePaw(Vector3 destination)
         {
-            while (Vector3.Distance(transform.localPosition, destination) > 0.01f)
+            // Use Vector3.Distance check on World Position
+            while (Vector3.Distance(transform.position, destination) > 0.01f)
             {
-                transform.localPosition = Vector3.MoveTowards(
-                    transform.localPosition,
+                transform.position = Vector3.MoveTowards(
+                    transform.position,
                     destination,
                     retractSpeed * Time.deltaTime
                 );
                 yield return null;
             }
-            transform.localPosition = destination;
+            transform.position = destination;
         }
 
         public void FlashPaw()
         {
-            // If you have a flash routine already, call it here
-            // Otherwise, a quick way is:
             StartCoroutine(FlashRoutine());
         }
 
         private IEnumerator FlashRoutine()
         {
-            SpriteRenderer sr = GetComponent<SpriteRenderer>();
-            Color originalColor = sr.color;
-            sr.color = Color.red;
+            if (spriteRenderer == null) yield break;
+            Color tempColor = spriteRenderer.color;
+            spriteRenderer.color = Color.red;
             yield return new WaitForSeconds(0.1f);
-            sr.color = originalColor;
+            spriteRenderer.color = tempColor;
         }
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 namespace BreakOut
 {
@@ -23,6 +24,7 @@ namespace BreakOut
         [Header("Stage 3 Screens (Boss)")]
         public CanvasGroup Stage3Intro;
         public CanvasGroup Stage3Win;
+        public CanvasGroup BerryTutorial;
         public CanvasGroup ShieldTutorial;
         public CanvasGroup JamTutorial;
 
@@ -31,6 +33,8 @@ namespace BreakOut
         public CanvasGroup BakingResultScreen;
         public Animator minigameAnimator;
         public Animator backgroundAnimator;
+
+        // --- DELETED: Boss Phase UI Variables (Moved to PowerUpController) ---
 
         private CanvasGroup currentActiveScreen;
 
@@ -51,40 +55,48 @@ namespace BreakOut
             if (Stage3Intro) Stage3Intro.gameObject.SetActive(false);
             if (Stage3Win) Stage3Win.gameObject.SetActive(false);
             if (BlueberryCounter) BlueberryCounter.gameObject.SetActive(false);
+            if (BerryTutorial) BerryTutorial.gameObject.SetActive(false);
             if (ShieldTutorial) ShieldTutorial.gameObject.SetActive(false);
             if (JamTutorial) JamTutorial.gameObject.SetActive(false);
         }
 
         private void Update()
         {
-            // We use unscaledDeltaTime here just in case, though Input works anyway
             if (currentActiveScreen != null && Input.GetKeyDown(KeyCode.Return))
             {
                 CanvasGroup screenToDismiss = currentActiveScreen;
                 currentActiveScreen = null;
 
-                // Use a slightly faster fade out for responsiveness
                 StartCoroutine(FadeOutRoutine(screenToDismiss, 3.0f));
                 OnScreenDismissed(screenToDismiss);
             }
+
+            // --- DELETED: UpdateBossUI() call removed ---
+            // The PowerUpController now updates its own UI sliders.
         }
 
-        // --- THE NEW TUTORIAL LOGIC ---
+        public void TriggerPhase1Tutorial()
+        {
+            StartCoroutine(SlowMotionTutorialRoutine(BerryTutorial));
+        }
 
         public void TriggerPhase2Tutorial()
         {
             StartCoroutine(SlowMotionTutorialRoutine(ShieldTutorial));
         }
 
+        public void TriggerPhase3Tutorial()
+        {
+            StartCoroutine(SlowMotionTutorialRoutine(JamTutorial));
+        }
+
         private IEnumerator SlowMotionTutorialRoutine(CanvasGroup tutorialScreen)
         {
             Debug.Log("[Tutorial] Slowing down time...");
-
-            // 1. Slow down time over 2 seconds
             float duration = 2.0f;
             float elapsed = 0f;
             float startScale = Time.timeScale;
-            float targetScale = 0.1f; // Slow down to 10% speed
+            float targetScale = 0.1f;
 
             while (elapsed < duration)
             {
@@ -94,15 +106,13 @@ namespace BreakOut
             }
             Time.timeScale = targetScale;
 
-            // 2. Show the screen
             ShowScreen(tutorialScreen);
         }
 
         private IEnumerator RestoreTimeScale()
         {
             Debug.Log("[Tutorial] Returning to normal speed...");
-
-            float duration = 1.0f; // Return to normal faster (1 second)
+            float duration = 1.0f;
             float elapsed = 0f;
             float startScale = Time.timeScale;
 
@@ -114,8 +124,6 @@ namespace BreakOut
             }
             Time.timeScale = 1.0f;
         }
-
-        // --- EXISTING LOGIC ---
 
         public void StartStage(StageType stage)
         {
@@ -149,7 +157,7 @@ namespace BreakOut
             if (currentActiveScreen != null) currentActiveScreen.gameObject.SetActive(false);
 
             currentActiveScreen = screen;
-            currentActiveScreen.alpha = 0; // Start transparent for fade in
+            currentActiveScreen.alpha = 0;
             currentActiveScreen.blocksRaycasts = true;
             currentActiveScreen.gameObject.SetActive(true);
 
@@ -160,7 +168,6 @@ namespace BreakOut
         {
             while (screen.alpha < 1)
             {
-                // Use unscaledDeltaTime so it fades in smoothly even if Time.timeScale is near 0
                 screen.alpha += Time.unscaledDeltaTime * 2.0f;
                 yield return null;
             }
@@ -175,11 +182,16 @@ namespace BreakOut
             else if (screen == Stage2Win) OnStage2Complete();
             else if (screen == Stage3Intro) BO_Manager.instance.SpawnBall();
 
-            // --- TUTORIAL DISMISSAL ---
+            else if (screen == BerryTutorial)
+            {
+                BO_Manager.instance.UnlockBerries();
+                StartCoroutine(RestoreTimeScale());
+            }
+
             else if (screen == ShieldTutorial)
             {
-                BO_Manager.instance.UnlockShield(); // Unlock the power!
-                StartCoroutine(RestoreTimeScale()); // Speed time back up
+                BO_Manager.instance.UnlockShield();
+                StartCoroutine(RestoreTimeScale());
             }
 
             else if (screen == BakingResultScreen)
@@ -189,7 +201,7 @@ namespace BreakOut
 
             else if (screen == JamTutorial)
             {
-                BO_Manager.instance.UnlockJam(); // Unlock Jam & Shots!
+                BO_Manager.instance.UnlockJam();
                 StartCoroutine(RestoreTimeScale());
             }
         }
@@ -199,17 +211,10 @@ namespace BreakOut
             targetScreen.blocksRaycasts = false;
             while (targetScreen.alpha > 0)
             {
-                // IMPORTANT: Use unscaledDeltaTime here too
                 targetScreen.alpha -= Time.unscaledDeltaTime * speed;
                 yield return null;
             }
             targetScreen.gameObject.SetActive(false);
-        }
-
-        public void TriggerPhase3Tutorial()
-        {
-            // Reuse your cool slow-mo routine!
-            StartCoroutine(SlowMotionTutorialRoutine(JamTutorial));
         }
 
         private IEnumerator FadeOutMiniGameAndStartStage3()
@@ -219,6 +224,10 @@ namespace BreakOut
             yield return new WaitForSeconds(0.5f);
 
             FindObjectOfType<BO_Paddle>().ApplyBakingModifiers();
+            if (BO_BossEntrance.Instance != null)
+            {
+                BO_BossEntrance.Instance.StartBossEntrance();
+            }
             StartStage(StageType.Stage3);
             yield return new WaitForEndOfFrame();
 

@@ -75,7 +75,7 @@ namespace BreakOut
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
                     hasStarted = true;
-                    if (startPromptText != null) startPromptText.SetActive(false);
+                    //if (startPromptText != null) startPromptText.SetActive(false);
                     Debug.Log("Baking Started!");
                 }
                 return;
@@ -177,19 +177,21 @@ namespace BreakOut
                 displayColor = coldColor;
                 BO_Manager.instance.SetBakingResult(BO_Manager.BakingResult.Undercooked);
             }
+
             else if (currentQuality >= 70f && currentQuality <= 80f)
             {
                 resultHeader = "PERFECT SCORE!";
                 displayColor = perfectColor;
                 BO_Manager.instance.SetBakingResult(BO_Manager.BakingResult.Perfect);
 
-                // Award the bonus
+                // Award the bonus (Restore 1 Full Heart / 2 HP)
                 if (BO_Manager.instance != null)
                 {
-                    BO_Manager.instance.lives++;
-                    BO_Manager.instance.UpdateDeathCount();
+                    // Use a new Heal function (we'll add this to Manager below)
+                    BO_Manager.instance.Heal(2);
                 }
             }
+
             else // 81-100
             {
                 resultHeader = "BURNT >:(";

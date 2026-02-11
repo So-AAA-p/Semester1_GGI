@@ -30,25 +30,25 @@ namespace BreakOut
         public static BO_Manager instance;
 
         [Header("Powerup Unlocks")]
+        public bool isBerriesUnlocked = false;
         public bool isShieldUnlocked = false;
         public bool isJamUnlocked = false;
 
+        [Header("Game Settings")]
+        public int maxHealth = 10;
+        private int currentHealth; // Internal tracker
+
         [Header("References")]
         public GameObject BallPrefab;
-        public GameObject gameOverObject; // The "You Lost" screen object
-        public TextMeshProUGUI scoretext;
-        public TextMeshProUGUI losertext; // Added this back in case you use it
-
-        [Header("Game Settings")]
-        public int lives = 5;
+        public GameObject gameOverObject;
+        public TextMeshProUGUI scoretext; // This will now show HP
+        public TextMeshProUGUI losertext;
 
         [Header("Ball Control")]
         public int maxBalls = 3;
         public float minBallScale = 0.6f; // Kept this as Ball script might need it
         public bool controlsReversed = false;
 
-        // Internal tracking
-        private uint deaths;
         private List<BO_Ball> activeBalls = new List<BO_Ball>();
 
         // (Optional) Hearts - if you add visual heart logic later, uncomment these
@@ -60,6 +60,7 @@ namespace BreakOut
             {
                 instance = this;
             }
+
             else
             {
                 Destroy(gameObject);
@@ -69,14 +70,40 @@ namespace BreakOut
 
         void Start()
         {
-            // Ensure Game Over screen is hidden at start
             if (gameOverObject != null) gameOverObject.SetActive(false);
 
-            UpdateDeathCount();
+            currentHealth = maxHealth; // Initialize HP
+            UpdateHealthDisplay();     // Draw the hearts
+        }
 
-            // NOTE: We do NOT spawn the ball here anymore. 
-            // The BO_StageController will tell us when to spawn 
-            // after the player presses Enter on the Intro Screen.
+        // Call this to sync the Text and the Hearts at once
+        public void UpdateHealthDisplay()
+        {
+            // Check if the GameObject is active and the reference isn't null
+            if (scoretext != null && scoretext.gameObject.activeInHierarchy)
+            {
+                scoretext.text = "Health: " + currentHealth;
+            }
+
+            if (BO_HealthDisplay.Instance != null && BO_HealthDisplay.Instance.gameObject.activeInHierarchy)
+            {
+                BO_HealthDisplay.Instance.UpdateDisplay(currentHealth);
+            }
+        }
+
+        public void Heal(int amount)
+        {
+            currentHealth += amount;
+            currentHealth = Mathf.Min(currentHealth, maxHealth); // Don't exceed 10 HP
+            UpdateHealthDisplay();
+        }
+
+        public void ResetLives() // Keeping the name so other scripts don't break
+        {
+            currentHealth = maxHealth;
+            UpdateHealthDisplay();
+            controlsReversed = false;
+            Debug.Log("[Manager] Health reset for new stage.");
         }
 
         public void SetState(GameState s)
@@ -87,6 +114,17 @@ namespace BreakOut
         {
             lastBakingResult = result;
             Debug.Log($"[Manager] Baking result stored: {lastBakingResult}");
+        }
+
+        public void UnlockBerries()
+        {
+            isBerriesUnlocked = true;
+            // Enable the cannon GameObject on the power-up controller if present
+            if (BO_PowerUpController.instance != null && BO_PowerUpController.instance.canon != null)
+            {
+                BO_PowerUpController.instance.canon.SetActive(true);
+            }
+            Debug.Log("<color=orange>[Manager] Berry Shots Unlocked!</color>");
         }
 
         public void UnlockShield()
@@ -123,22 +161,17 @@ namespace BreakOut
 
         public void RemoveBall(BO_Ball ball)
         {
-            if (activeBalls.Contains(ball))
-                activeBalls.Remove(ball);
-
+            if (activeBalls.Contains(ball)) activeBalls.Remove(ball);
             if (ball != null) Destroy(ball.gameObject);
 
-            deaths++;
-            UpdateDeathCount();
+            currentHealth -= 1;
+            UpdateHealthDisplay();
 
-            if (deaths >= lives)
+            if (currentHealth <= 0)
             {
                 GameOver();
                 return;
             }
-
-            // DEBUG: Let's see why it's not respawning in the console
-            Debug.Log($"[Manager] Ball removed. Count: {activeBalls.Count}, Playable: {IsPlayableState()}");
 
             if (activeBalls.Count == 0 && IsPlayableState())
             {
@@ -185,20 +218,6 @@ namespace BreakOut
                 if (ball != null) Destroy(ball.gameObject);
             }
             activeBalls.Clear();
-        }
-
-        public void ResetLives()
-        {
-            deaths = 0; // Or set to your starting value
-            UpdateDeathCount(); // Updates your UI text
-            controlsReversed = false;
-            Debug.Log("[Manager] Lives and Paddle Effects have been reset for the new stage.");
-        }
-
-        public void UpdateDeathCount()
-        {
-            if (scoretext != null)
-                scoretext.text = "Leben: " + (lives - deaths);
         }
 
         public void ToggleControls()

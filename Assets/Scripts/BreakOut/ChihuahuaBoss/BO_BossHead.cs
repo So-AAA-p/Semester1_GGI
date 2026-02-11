@@ -10,12 +10,13 @@ namespace BreakOut
         public static BO_BossHead Instance;
 
         public enum Phase 
-        { 
-            PhaseOne, 
-            PhaseTwo, 
-            PhaseThree 
+        {
+            PhaseZero,   // 100-90% (Plain Breakout)
+            PhaseOne,    // 90-70%  (Unlock Berries/Shots)
+            PhaseTwo,    // 70-40%  (Unlock Shield)
+            PhaseThree   // 40-0%   (Unlock Jam Mode + Leaves)
         }
-        public Phase currentPhase = Phase.PhaseOne;
+        public Phase currentPhase = Phase.PhaseZero;
 
         [Header("Stats")]
         public float maxHealth = 100f;
@@ -26,11 +27,16 @@ namespace BreakOut
         public Slider healthSlider;
         public float healthChangeSpeed = 5f;
         public SpriteRenderer bossSprite;
+        public Sprite normalSprite;      // Your default idle head
+        public Sprite attackSprite;      // Mouth open
+        public Sprite deadSprite;        // The "tuckered out" version
         public Color flashColor = new Color(1f, 0f, 0f, 0.5f);
         public float flashDuration = 0.1f;
 
         private Color originalColor;
         private Coroutine flashRoutine;
+
+        public bool isDead = false;
 
         private void Awake()
         {
@@ -51,6 +57,8 @@ namespace BreakOut
                 healthSlider.maxValue = maxHealth;
                 healthSlider.value = maxHealth;
             }
+
+            if (healthSlider != null) healthSlider.gameObject.SetActive(false);
         }
 
         private void Update()
@@ -107,8 +115,17 @@ namespace BreakOut
 
         void Die()
         {
+            if (isDead) return; // Prevent Die from running twice
+            isDead = true;
+
             Debug.Log("[Boss] The Chihuahua has been tuckered out! (Defeated)");
-            if (bossVisualParent != null) bossVisualParent.SetActive(false);
+
+            // Stop any flashing that might be happening
+            if (flashRoutine != null) StopCoroutine(flashRoutine);
+            bossSprite.color = originalColor;
+
+            SetBossSprite(deadSprite);
+
             if (healthSlider != null) healthSlider.gameObject.SetActive(false);
 
             if (BO_StageController.Instance != null)
@@ -119,50 +136,53 @@ namespace BreakOut
             }
         }
 
-        // Inside BO_BossHead.cs
+        public void SetBossSprite(Sprite newSprite)
+        {
+            // If the boss is dead, don't let any other script (like Attack) change the sprite back!
+            if (isDead && newSprite != deadSprite) return;
+
+            if (bossSprite != null && newSprite != null)
+            {
+                bossSprite.sprite = newSprite;
+            }
+        }
 
         void UpdatePhase()
         {
             float healthPercent = currentHealth / maxHealth;
             Phase previousPhase = currentPhase;
 
-            if (healthPercent < 0.5f) currentPhase = Phase.PhaseThree;
-            else if (healthPercent < 0.66f) currentPhase = Phase.PhaseTwo;
-            else currentPhase = Phase.PhaseOne;
+            // --- Thresholds ---
+            if (healthPercent < 0.40f) currentPhase = Phase.PhaseThree;
+            else if (healthPercent < 0.70f) currentPhase = Phase.PhaseTwo;
+            else if (healthPercent < 0.90f) currentPhase = Phase.PhaseOne;
+            else currentPhase = Phase.PhaseZero;
 
-            // --- PHASE 2 TRIGGER (SHIELD) ---
-            if (previousPhase == Phase.PhaseOne && currentPhase == Phase.PhaseTwo)
+            if (previousPhase == currentPhase) return;
+
+            // --- TRIGGER LOGIC ---
+
+            // Enter Phase 1: BERRY SHOTS
+            if (previousPhase == Phase.PhaseZero && currentPhase == Phase.PhaseOne)
             {
-                Debug.Log("[Boss] Entering Phase 2 - Triggering Slow-Mo Tutorial");
-                if (BO_StageController.Instance != null)
-                {
-                    BO_StageController.Instance.TriggerPhase2Tutorial();
-                }
+                Debug.Log("[Boss] Entering Phase 1 - Unlocking Berries");
+                // We'll need to create this method in StageController
+                BO_StageController.Instance.TriggerPhase1Tutorial();
             }
 
-            // --- PHASE 3 TRIGGER (LEAVES) ---
-            if (previousPhase != Phase.PhaseThree && currentPhase == Phase.PhaseThree)
+            // Enter Phase 2: SHIELD
+            else if (previousPhase == Phase.PhaseOne && currentPhase == Phase.PhaseTwo)
             {
-                if (BO_LeafManager.Instance != null)
-                {
-                    BO_LeafManager.Instance.StartPhase3();
-                }
-                // (We will add the Jam Tutorial trigger here later!)
+                Debug.Log("[Boss] Entering Phase 2 - Unlocking Shield");
+                BO_StageController.Instance.TriggerPhase2Tutorial();
             }
 
-            if (previousPhase != Phase.PhaseThree && currentPhase == Phase.PhaseThree)
+            // Enter Phase 3: JAM MODE + LEAVES
+            else if (previousPhase == Phase.PhaseTwo && currentPhase == Phase.PhaseThree)
             {
-                if (BO_LeafManager.Instance != null)
-                {
-                    BO_LeafManager.Instance.StartPhase3();
-                }
-
-                // --- TRIGGER JAM TUTORIAL ---
-                Debug.Log("[Boss] Entering Phase 3 - Triggering Jam Tutorial");
-                if (BO_StageController.Instance != null)
-                {
-                    BO_StageController.Instance.TriggerPhase3Tutorial();
-                }
+                Debug.Log("[Boss] Entering Phase 3 - Unlocking Jam Mode");
+                if (BO_LeafManager.Instance != null) BO_LeafManager.Instance.StartPhase3();
+                BO_StageController.Instance.TriggerPhase3Tutorial();
             }
         }
     }
