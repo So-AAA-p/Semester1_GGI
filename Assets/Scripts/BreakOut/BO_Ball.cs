@@ -33,19 +33,28 @@ namespace BreakOut
 
         void Start()
         {
-            normalBallColor = sr.color;
+            // Store original color for jam toggle.
+            if (sr != null)
+                normalBallColor = sr.color;
 
-            // If ball already moving, don't stick
-            if (rb.linearVelocity.magnitude > 0.1f)
+            // If ball is already moving, don't attach to paddle.
+            if (rb != null && rb.linearVelocity.magnitude > 0.1f)
             {
                 isAttached = false;
                 return;
             }
 
-            // Find paddle
-            BO_Paddle paddle = FindObjectOfType<BO_Paddle>();
+            // Prefer the static instance (if the paddle set it in Awake).
+            BO_Paddle paddle = BO_Paddle.Instance;
+            if (paddle == null)
+            {
+                // Fallback: try FindObjectOfType in case Awake ordering prevented Instance assignment.
+                paddle = FindObjectOfType<BO_Paddle>();
+            }
+
             if (paddle != null)
             {
+                // Attach ball above the paddle and follow until launch.
                 paddleTransform = paddle.transform;
                 isAttached = true;
                 Vector3 startPos = paddleTransform.position + Vector3.up * 0.8f;
@@ -54,6 +63,8 @@ namespace BreakOut
             }
             else
             {
+                // No paddle found � log to help debug scene setup and launch the ball
+                Debug.LogWarning("[BO_Ball] No BO_Paddle found in scene. Ball will launch from prefab position.");
                 Launch();
             }
         }
@@ -82,13 +93,17 @@ namespace BreakOut
             angle *= Random.value < 0.5f ? -1 : 1;
 
             Vector2 direction = new Vector2(side, angle).normalized;
-            rb.linearVelocity = direction * constantSpeed;
+            if (rb != null)
+                rb.linearVelocity = direction * constantSpeed;
         }
 
         public void SetVelocity(Vector2 velocity)
         {
-            rb.linearVelocity = velocity;
-            isAttached = false;
+            if (rb != null)
+            {
+                rb.linearVelocity = velocity;
+                isAttached = false;
+            }
         }
 
         public void EnableJamCoating()
@@ -103,8 +118,7 @@ namespace BreakOut
             isJamCoated = false;
             if (sr != null) sr.color = normalBallColor;
 
-            // --- FIX: UPDATED REFERENCE ---
-            // Tell the PowerUpController (instead of JamController) the mode is done
+            // Tell the PowerUpController the mode is done
             if (BO_PowerUpController.instance != null)
             {
                 BO_PowerUpController.instance.JamHitComplete();
@@ -118,7 +132,7 @@ namespace BreakOut
                 rb.linearVelocity = rb.linearVelocity.normalized * constantSpeed;
             }
 
-            if (!isAttached)
+            if (!isAttached && rb != null)
             {
                 lastVelocity = rb.linearVelocity;
             }
@@ -127,7 +141,7 @@ namespace BreakOut
         public void ApplyBakingModifiers()
         {
             Vector3 normalScale = Vector3.one;
-            if (BO_Manager.instance.lastBakingResult == BO_Manager.BakingResult.Burnt)
+            if (BO_Manager.instance != null && BO_Manager.instance.lastBakingResult == BO_Manager.BakingResult.Burnt)
             {
                 transform.localScale = normalScale * 0.7f;
                 GetComponent<SpriteRenderer>().color = new Color(0.2f, 0.2f, 0.2f);
@@ -177,7 +191,8 @@ namespace BreakOut
                 boss.TakeDamage(3);
             }
 
-            rb.linearVelocity = dir * constantSpeed;
+            if (rb != null)
+                rb.linearVelocity = dir * constantSpeed;
         }
 
         void OnTriggerEnter2D(Collider2D other)
@@ -189,15 +204,15 @@ namespace BreakOut
             }
         }
 
-        public Vector2 GetVelocity() { return rb.linearVelocity; }
+        public Vector2 GetVelocity() { return rb != null ? rb.linearVelocity : Vector2.zero; }
 
         public void StopBall()
         {
-            Rigidbody2D rb = GetComponent<Rigidbody2D>();
-            if (rb != null)
+            Rigidbody2D rbLocal = GetComponent<Rigidbody2D>();
+            if (rbLocal != null)
             {
-                rb.linearVelocity = Vector2.zero;
-                rb.isKinematic = true;
+                rbLocal.linearVelocity = Vector2.zero;
+                rbLocal.isKinematic = true;
             }
         }
     }

@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+namespace Pong
+{
 public class PongMenu : MonoBehaviour
 {
     public Button ClassicMode;
@@ -16,4 +18,6 @@ public class PongMenu : MonoBehaviour
         BallTypesMode.onClick.AddListener(() => SceneManager.LoadScene(5));
         BackToMainMenu.onClick.AddListener(() => SceneManager.LoadScene(0));
 	}
+}
+
 }

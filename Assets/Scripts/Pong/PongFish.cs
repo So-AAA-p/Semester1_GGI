@@ -1,5 +1,7 @@
 using UnityEngine;
 
+namespace Pong
+{
 public class UnderwaterFish : MonoBehaviour
 {
     [Header("Horizontal Movement")]
@@ -39,4 +41,5 @@ public class UnderwaterFish : MonoBehaviour
 
         transform.position = new Vector3(posX, posY, transform.position.z);
     }
+}
 }

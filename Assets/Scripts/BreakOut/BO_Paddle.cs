@@ -16,11 +16,17 @@ namespace BreakOut
         public Color normalColor = Color.white;
         public Color reversedColor = new Color(1f, 0.4f, 0.4f);
 
-        private void Awake() { Instance = this; }
+        private void Awake()
+        {
+            // Ensure Instance is set as early as possible for other scripts to find.
+            Instance = this;
+
+            // Initialize spriteRenderer here to reduce ordering/timing issues.
+            spriteRenderer = GetComponent<SpriteRenderer>();
+        }
 
         void Start()
         {
-            spriteRenderer = GetComponent<SpriteRenderer>();
             defaultSpeed = controls.paddleSpeed;
             UpdatePaddleColor();
         }
@@ -43,7 +49,7 @@ namespace BreakOut
         // --- EXISTING MOVEMENT ---
         void Update()
         {
-            bool reversed = BO_Manager.instance.controlsReversed;
+            bool reversed = BO_Manager.instance != null && BO_Manager.instance.controlsReversed;
             UpdatePaddleColor();
 
             if (Input.GetKey(controls.LeftKey))
@@ -70,8 +76,13 @@ namespace BreakOut
 
         void UpdatePaddleColor()
         {
+            // Be defensive: avoid NullReference if BO_Manager.instance isn't ready yet.
             if (spriteRenderer == null) return;
-            spriteRenderer.color = BO_Manager.instance.controlsReversed ? reversedColor : normalColor;
+
+            if (BO_Manager.instance == null)
+                spriteRenderer.color = normalColor;
+            else
+                spriteRenderer.color = BO_Manager.instance.controlsReversed ? reversedColor : normalColor;
         }
 
         public void ApplyBakingModifiers()
@@ -90,14 +101,11 @@ namespace BreakOut
         {
             if (collision.CompareTag("BO_Blueberry"))
             {
-                // 1. Tell Leaf/Stage logic
                 if (BO_LeafManager.Instance != null && !BO_LeafManager.Instance.isPhase3Active)
                 {
                     BO_BlueberryManager.Instance.CollectBerry();
                 }
 
-                // 2. FILL THE JAM METER (Updated to use PowerUpController)
-                // Note: We use 'instance' (lowercase) to match the PowerUp script
                 if (BO_PowerUpController.instance != null)
                 {
                     BO_PowerUpController.instance.AddBerry();

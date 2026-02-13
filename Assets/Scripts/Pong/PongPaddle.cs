@@ -7,13 +7,7 @@ namespace Pong
     {
         public PongControls controls;
 
-        public enum Direction
-        {
-            Positive,                                                           // hoch oder nach rechts
-            Negative,                                                           // runter oder nach links
-            None
-        }
-
+        // We don't need the Direction enum anymore!
 
         public bool moveHorizontally = false;
         private bool sizeLocked;
@@ -37,6 +31,43 @@ namespace Pong
             paddleRb = GetComponent<Rigidbody2D>();
         }
 
+        // --- PHYSICS MOVEMENT LOOP ---
+        void FixedUpdate()
+        {
+            float input = 0;
+            if (Input.GetKey(controls.PositiveKey)) input = 1;
+            if (Input.GetKey(controls.NegativeKey)) input = -1;
+
+            // Check if we are in Level 1 (Ice Mode)
+            bool isLevel1 = false;
+            if (PongManager.instance != null) // Safety check
+            {
+                isLevel1 = (PongManager.instance.currentLevel == PongManager.LevelType.Classic);
+            }
+
+            if (isLevel1)
+            {
+                // TYPE A: Ice / Sliding Movement (AddForce)
+                Vector2 forceDirection = moveHorizontally ? Vector2.right : Vector2.up;
+                paddleRb.AddForce(forceDirection * input * controls.paddleSpeed);
+            }
+            else
+            {
+                // TYPE B: Snappy / Exact Movement (Velocity)
+                // This stops instantly when you let go of the key.
+                Vector2 velocityVector = Vector2.zero;
+
+                if (moveHorizontally)
+                    velocityVector = new Vector2(input * controls.paddleSpeed, 0);
+                else
+                    velocityVector = new Vector2(0, input * controls.paddleSpeed);
+
+                paddleRb.linearVelocity = velocityVector;
+            }
+        }
+
+        // --- SIZE & VISUALS ---
+
         public bool ModifySize(float delta)
         {
             Vector3 scale = transform.localScale;
@@ -47,13 +78,9 @@ namespace Pong
 
             transform.localScale = scale;
 
-            // return true if size actually changed
+            // Note: Since we use Physics now, the BoxCollider2D automatically 
+            // resizes with the transform. No extra code needed!
             return !Mathf.Approximately(oldY, scale.y);
-        }
-
-        void UnlockSize()
-        {
-            sizeLocked = false;
         }
 
         public void Flash(Color flashColor, float duration)
@@ -66,89 +93,7 @@ namespace Pong
         {
             sr.color = flashColor;
             yield return new WaitForSeconds(duration);
-            sr.color = originalColor; // your #E0B46E color
-        }
-
-
-        void Update()
-        {
-            float input = 0;
-            if (Input.GetKey(controls.PositiveKey)) input = 1;
-            if (Input.GetKey(controls.NegativeKey)) input = -1;
-
-            // Check level from the Manager
-            bool isLevel1 = PongManager.instance.currentLevel == PongManager.LevelType.Classic;
-
-            if (isLevel1 && paddleRb != null)
-            {
-                // ONLY Level 1 gets this
-                ApplyIceMovement(input);
-            }
-            else
-            {
-                // LEVEL 2, 3, etc. get snappy movement
-                if (paddleRb != null)
-                {
-                    paddleRb.linearVelocity = Vector2.zero;
-                }
-
-                // Use your original Move method for precision
-                Move(input > 0 ? Direction.Positive : (input < 0 ? Direction.Negative : Direction.None));
-            }
-        }
-
-        void Move(Direction direction)
-        {
-            float moveAmount = controls.paddleSpeed * Time.deltaTime;
-            moveAmount *= direction == Direction.Positive ? 1 : -1;
-            // int directionMultiplier = direction == Direction.Up ? 1 : -1;
-            // moveDistance *= directionMultiplier;
-
-            if (direction == Direction.None)
-            {
-                // If we aren't pressing anything, don't move at all!
-                return;
-            }
-
-            if (moveHorizontally)
-            {
-                float newX = transform.position.x + moveAmount;
-
-                newX = Mathf.Clamp(newX, controls.minX, controls.maxX);
-
-                transform.position = new Vector3(
-                    newX,
-                    transform.position.y,
-                    transform.position.z
-                );
-            }
-            else
-            {
-                float newY = transform.position.y + moveAmount;
-
-                newY = Mathf.Clamp(newY, controls.minY, controls.maxY);
-
-                transform.position = new Vector3(
-                    transform.position.x,
-                    newY,
-                    transform.position.z
-                );
-            }
-            //Debug.Log(direction.ToString() + "gedrückt");
-        }
-
-        void ApplyIceMovement(float input)
-        {
-            // We only need to check the axis here, not the level anymore 
-            // because the level check happened in Update()
-            if (moveHorizontally)
-            {
-                paddleRb.AddForce(Vector2.right * input * controls.paddleSpeed);
-            }
-            else
-            {
-                paddleRb.AddForce(Vector2.up * input * controls.paddleSpeed);
-            }
+            sr.color = originalColor;
         }
     }
 }

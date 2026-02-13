@@ -10,11 +10,5 @@ namespace Pong
         public KeyCode NegativeKey = KeyCode.S;
 
         public float paddleSpeed;
-
-        public float minY = -10f;                                       // basically egal welche werte hier stehen -> public, deswegen im Inspector angezeigt und Inspector überschreibt code
-        public float maxY = 10f;
-
-        public float minX = -4.5f;
-        public float maxX = 4.5f;
     }
 }

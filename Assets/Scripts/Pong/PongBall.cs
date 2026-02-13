@@ -22,6 +22,8 @@ namespace Pong
         private Vector3 baseScale;
         private Vector3 originalScale;
 
+        public ParticleSystem snowTrail;
+
         private BallTeleporter lastTeleporter;
 
         public enum BallType
@@ -203,6 +205,7 @@ namespace Pong
             isLiquid = false;
             canSquish = false;
             canTeleport = true;
+            if (snowTrail != null) snowTrail.Stop();
 
             rb.linearDamping = 0f;
             currentWobble = 0f;
@@ -218,6 +221,7 @@ namespace Pong
             {
                 case BallType.Classic:
                     canShrink = true;
+                    if (snowTrail != null) snowTrail.Play();
                     canTeleport = false;
                     break;
 

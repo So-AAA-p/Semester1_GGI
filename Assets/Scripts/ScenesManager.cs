@@ -31,6 +31,11 @@ public class ScenesManager : MonoBehaviour
         SceneManager.LoadScene(6);
     }
 
+    public void OpenCredits()
+    {
+        SceneManager.LoadScene(7);
+    }
+
     public void Quit()
     {
         Application.Quit();

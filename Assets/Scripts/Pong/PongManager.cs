@@ -28,7 +28,7 @@ namespace Pong
             BallTypes
         }
 
-        private GameState currentState = GameState.Start;
+        public GameState currentState = GameState.Start;
         public LevelType currentLevel = LevelType.Classic;
 
         public static PongManager instance;
@@ -36,11 +36,15 @@ namespace Pong
         public GameObject gameStartObject;
         public GameObject enter;
         public float ballstartvelocity = 5;
-        public TextMeshProUGUI scoretext;
         public TextMeshProUGUI winnertext;
 
-        private uint player1score;                                                          // uint wie normales int, aber ohne negativen Zahlen
-        private uint player2score;
+        [Header("UI References")]
+        public TMP_Text mainScoreText;      // Your current single text field (Level 1 & 3)
+        public TMP_Text player1ScoreText;   // New field for Level 2
+        public TMP_Text player2ScoreText;   // New field for Level 2
+
+        private uint player1Score;                                                          // uint wie normales int, aber ohne negativen Zahlen
+        private uint player2Score;
 
         public int maxPoints = 5;
 
@@ -101,6 +105,10 @@ namespace Pong
             currentState = GameState.Playing;
             gameStartObject.SetActive(false);
 
+            player1Score = 0;
+            player2Score = 0;
+            UpdateScoreUI();
+
             StartCoroutine(SpawnBallWithDelay(1.5f));
             ConfigureLevel();
         }
@@ -137,15 +145,15 @@ namespace Pong
                 return;
 
             if (player == Player.Player1)
-                player1score++;
+                player1Score++;
             else
-                player2score++;
+                player2Score++;
 
-            UpdateScore();
+            UpdateScoreUI();
 
-            if (player1score == maxPoints)
+            if (player1Score == maxPoints)
                 GameOver(Player.Player1);
-            else if (player2score == maxPoints)
+            else if (player2Score == maxPoints)
                 GameOver(Player.Player2);
             else
                 ResetBall();
@@ -209,9 +217,32 @@ namespace Pong
         }
 
 
-        public void UpdateScore()
+        void UpdateScoreUI()
         {
-            scoretext.text = player1score + ":" + player2score;
+            // SAFETY: If mainScoreText is missing in the Inspector, don't crash the game!
+            if (mainScoreText == null || player1ScoreText == null || player2ScoreText == null)
+            {
+                Debug.LogError("UI Text references are missing in the PongManager Inspector!");
+                return;
+            }
+
+            if (currentLevel == LevelType.UnderWater)
+            {
+                mainScoreText.gameObject.SetActive(false);
+                player1ScoreText.gameObject.SetActive(true);
+                player2ScoreText.gameObject.SetActive(true);
+
+                player1ScoreText.text = player1Score.ToString();
+                player2ScoreText.text = player2Score.ToString();
+            }
+            else
+            {
+                mainScoreText.gameObject.SetActive(true);
+                player1ScoreText.gameObject.SetActive(false);
+                player2ScoreText.gameObject.SetActive(false);
+
+                mainScoreText.text = player1Score + " - " + player2Score;
+            }
         }
 
 

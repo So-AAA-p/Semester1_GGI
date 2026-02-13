@@ -54,15 +54,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5213010960384970659, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: m_Color.b
-      value: 0.050980397
+      value: 0.5896226
       objectReference: {fileID: 0}
     - target: {fileID: 5213010960384970659, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: m_Color.g
-      value: 0.20784315
+      value: 0.70576715
       objectReference: {fileID: 0}
     - target: {fileID: 5213010960384970659, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: m_Color.r
-      value: 0.6117647
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5213010960384970659, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -71,6 +71,10 @@ PrefabInstance:
     - target: {fileID: 6202663051245857347, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: m_Name
       value: PB_Switch Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 6202663051245857347, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: m_TagString
+      value: PongBall
       objectReference: {fileID: 0}
     - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: ballType
@@ -81,6 +85,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: maxSpeed
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: launchMode
       value: 1
       objectReference: {fileID: 0}
@@ -89,20 +97,28 @@ PrefabInstance:
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: switchColor.b
+      value: 0.5921569
+      objectReference: {fileID: 0}
+    - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: switchColor.g
-      value: 0.20784314
+      value: 0.7058824
+      objectReference: {fileID: 0}
+    - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: switchColor.r
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: unstableColor.b
-      value: 0.13725491
+      value: 0.53333336
       objectReference: {fileID: 0}
     - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: unstableColor.g
-      value: 0.43529412
+      value: 0.8235294
       objectReference: {fileID: 0}
     - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: unstableColor.r
-      value: 0.62352943
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: maxBlinkInterval
@@ -113,28 +129,40 @@ PrefabInstance:
       value: 0.02
       objectReference: {fileID: 0}
     - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: switchBlinkColor.b
+      value: 0.3099858
+      objectReference: {fileID: 0}
+    - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: switchBlinkColor.g
+      value: 0.44978112
+      objectReference: {fileID: 0}
+    - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
+      propertyPath: switchBlinkColor.r
+      value: 0.8113208
+      objectReference: {fileID: 0}
+    - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: paddleDecreaseColor.b
-      value: 0.33333334
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: paddleDecreaseColor.g
-      value: 0.18431373
+      value: 0.6666667
       objectReference: {fileID: 0}
     - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: paddleDecreaseColor.r
-      value: 0.34117648
+      value: 0.90588236
       objectReference: {fileID: 0}
     - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: paddleIncreaseColor.b
-      value: 0.28627452
+      value: 0.8039216
       objectReference: {fileID: 0}
     - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: paddleIncreaseColor.g
-      value: 0.11764706
+      value: 0.6392157
       objectReference: {fileID: 0}
     - target: {fileID: 8889734300368388880, guid: dfc4732f6f5bb89499115046c3820859, type: 3}
       propertyPath: paddleIncreaseColor.r
-      value: 0.48235294
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
